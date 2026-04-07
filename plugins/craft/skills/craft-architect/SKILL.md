@@ -56,7 +56,7 @@ Spawn based on task scope:
 
 **Small tasks** (≤3 requirements, single-file or tightly scoped changes): spawn **Minimal only**.
 **Medium tasks** (cross-file, new component/function, 4–6 requirements): spawn **Minimal +
-Pragmatic**. **Large tasks** (new subsystem, API surface change, data model change, ≥7
+Clean/Robust**. **Large tasks** (new subsystem, API surface change, data model change, ≥7
 requirements): spawn **Minimal + Clean/Robust + Pragmatic**.
 
 All agents use `subagent_type: "craft:architect"`. Pass each a distinct approach directive in the

@@ -44,48 +44,12 @@ Read the workpad (`workpad.md`) for: requirements R1..Rn, acceptance criteria, i
 summary. If workpad is absent or has no requirements, proceed without them but note in the Review
 Report: "No workpad found — requirements traceability and AC verification skipped."
 
-## Step 2 — Topic Tagging
+## Step 2 — Review
 
-Spawn the **topic-tagger** sub-agent using the Agent tool with
-`subagent_type: "craft:topic-tagger"`.
+Read the topic-reviewer map. Each reviewer agent has a matching `subagent_type` (e.g.,
+`"craft:reviewer-correctness"`, `"craft:reviewer-simplification"`, etc.).
 
-Pass to it:
-
-- The full diff
-- The list of changed file paths
-- The tag vocabulary from the topic-reviewer map
-
-The tagger emits conditional topic tags only (not the always-on ones). It does not select reviewers
-— it only emits tags.
-
-Wait for the tagger to return its tag list.
-
-## Step 3 — Reviewer Selection
-
-Read the topic-reviewer map to select reviewers. Each reviewer agent has a matching `subagent_type`
-(e.g., `"craft:reviewer-correctness"`, `"craft:reviewer-simplification"`, etc.).
-
-**Always spawn:** All reviewers marked `✓` in the Always? column of the map. This includes
-`reviewer-correctness`, `reviewer-simplification`, and `reviewer-requirements`.
-
-For `reviewer-idioms`: spawn one instance per `idioms-*` tag emitted by the topic-tagger. Pass the
-stack name as the parameter (e.g., tag `idioms-go` → spawn reviewer-idioms with "Review Go
-idioms.").
-
-**Spawn for each other matching tag** (from topic-reviewer-map.md — read the Reviewer(s) column):
-each conditional tag emitted by the topic-tagger maps to the reviewer(s) in that column.
-
-**Coverage floor:** If zero conditional reviewers are selected and diff is >50 lines, add
-`reviewer-tests` and `reviewer-error-handling` as defaults. Log: "Topic tagger emitted no
-conditional tags for >50 line diff. Adding tests + error-handling as coverage floor."
-
-Deduplicate the final reviewer list.
-
-## Step 4 — Parallel Review
-
-Spawn all reviewers **in parallel** using the Agent tool with the appropriate `subagent_type` for
-each (e.g., `"craft:reviewer-correctness"`, `"craft:reviewer-tests"`, etc.). Each reviewer's prompt
-receives:
+Pass every reviewer:
 
 - The diff (full)
 - Full content of the changed files (read them, do not summarize)
@@ -95,10 +59,34 @@ receives:
 
 Each reviewer returns structured findings using the finding format defined in their agent file.
 
-For `reviewer-idioms`: pass the stack name as a parameter. Example: "Review Go idioms. The stack is:
-Go."
+### Wave 1 — always-on reviewers + topic tagger
 
-## Step 5 — Cross-Review Corroboration
+Spawn the following **in parallel**, in a single message:
+
+- All reviewers marked `✓` in the Always? column of the map (`reviewer-correctness`,
+  `reviewer-simplification`, `reviewer-requirements`)
+- The **topic-tagger** sub-agent (`subagent_type: "craft:topic-tagger"`), passing it:
+  - The full diff
+  - The list of changed file paths
+  - The tag vocabulary from the topic-reviewer map
+
+The tagger emits conditional topic tags only (not the always-on ones). Reviewer selection happens in
+wave 2.
+
+### Wave 2 — conditional reviewers
+
+After the topic tagger returns, select and spawn conditional reviewers:
+
+- For each tag emitted by the tagger, spawn the reviewer(s) listed in the topic-reviewer map's
+  Reviewer(s) column.
+- For `reviewer-idioms`: spawn one instance per `idioms-*` tag. Pass the stack name as a parameter.
+  Example: tag `idioms-go` → spawn reviewer-idioms with "Review Go idioms. The stack is: Go."
+- **Coverage floor:** If the tagger's tags select zero conditional reviewers and the diff exceeds 50
+  lines, add `reviewer-tests` and `reviewer-error-handling` as defaults. Log: "Topic tagger emitted
+  no conditional tags for >50 line diff. Adding tests + error-handling as coverage floor."
+- Deduplicate against wave 1 reviewers before spawning.
+
+## Step 3 — Cross-Review Corroboration
 
 After all reviewers return, scan for the same finding across multiple outputs:
 
@@ -111,7 +99,7 @@ After all reviewers return, scan for the same finding across multiple outputs:
 - **Deduplication:** Show the corroborated finding once with the best-written description; note the
   other reviewer(s) in parentheses
 
-## Step 6 — AC Verification
+## Step 4 — AC Verification
 
 Skip this step if no workpad or acceptance criteria exist. Note in the Review Report: "No acceptance
 criteria — AC verification skipped."
@@ -130,7 +118,7 @@ The verifier checks each AC against the implementation:
 - Returns PASS / FAIL / MANUAL-VERIFY for each AC
 - FAIL becomes a P1 finding in the review report
 
-## Step 7 — Independent Verification
+## Step 5 — Independent Verification
 
 Collect all findings with confidence **POSSIBLE or LIKELY**. Batch them into a reasonable number of
 **review-verifier** instances (using `subagent_type: "craft:review-verifier"`), grouping findings
@@ -142,7 +130,7 @@ verifier returns a binary verdict: CONFIRMED / NOT CONFIRMED.
 
 Findings with confidence **CERTAIN** skip verification.
 
-## Step 8 — Scoring and Synthesis
+## Step 6 — Scoring and Synthesis
 
 Compute review score (informational — not a hard gate):
 
