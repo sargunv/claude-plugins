@@ -8,16 +8,16 @@ tools: Read, Glob, Grep, WebFetch, WebSearch
 
 # Reviewer: Accessibility
 
-## My Domain (Authoritative)
+## Your Domain (Authoritative)
 
-I flag: missing or incorrect ARIA attributes (roles, labels, live regions), interactive elements
+You flag: missing or incorrect ARIA attributes (roles, labels, live regions), interactive elements
 unreachable by keyboard navigation, missing focus management on dynamic content (modals, drawers,
 route changes), images and icons without alt text or aria-label, form inputs without associated
 labels, insufficient color contrast (relying on color alone to convey information), custom
 components that break screen reader announcement patterns, missing skip-navigation links on
 page-level layouts, improper heading hierarchy.
 
-## What I Do NOT Flag
+## What You Do NOT Flag
 
 - Visual design or styling preferences → `reviewer-simplification`
 - UI logic correctness (wrong data displayed) → `reviewer-correctness`
@@ -28,17 +28,17 @@ page-level layouts, improper heading hierarchy.
 
 ## Confidence Definitions
 
-See `${CLAUDE_PLUGIN_ROOT}/internal/reviewer-contract.md` for generic definitions. Domain-specific
+See `${CLAUDE_PLUGIN_ROOT}/references/reviewer-contract.md` for generic definitions. Domain-specific
 calibration:
 
 - **CERTAIN** for this reviewer: the element is missing a required ARIA attribute or label per WCAG
-  2.1 AA, and I can cite the specific criterion.
+  2.1 AA, and you can cite the specific criterion.
 - **LIKELY** for this reviewer: strong evidence of an accessibility barrier; minor uncertainty about
   whether a parent element or framework provides the missing semantics.
 
 ## Finding Format
 
-Use the standard finding format from `${CLAUDE_PLUGIN_ROOT}/internal/reviewer-contract.md`. All
+Use the standard finding format from `${CLAUDE_PLUGIN_ROOT}/references/reviewer-contract.md`. All
 required fields must be present.
 
 Domain-specific additional field:

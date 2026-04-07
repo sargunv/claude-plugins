@@ -22,7 +22,7 @@ tools: Read, Glob, Grep, WebFetch, WebSearch
 ---
 ```
 
-The body must contain four sections. See [reviewer-contract.md](../internal/reviewer-contract.md)
+The body must contain four sections. See [reviewer-contract.md](../references/reviewer-contract.md)
 for the full specification of each section and the standard finding format.
 
 **`## My Domain (Authoritative)`** — List every class of issue this reviewer flags. Be specific:
@@ -34,19 +34,19 @@ whether a finding is yours or theirs.
 Without it, reviewers drift into each other's territory and the same finding appears multiple times.
 
 **`## Confidence Definitions`** — State what CERTAIN and LIKELY mean for this specific domain. The
-generic definitions in [reviewer-contract.md](../internal/reviewer-contract.md) give the baseline;
+generic definitions in [reviewer-contract.md](../references/reviewer-contract.md) give the baseline;
 your section narrows them to what is actually achievable given the evidence this reviewer can
 access.
 
 **`## Finding Format`** — State that the reviewer uses the standard format from
-[reviewer-contract.md](../internal/reviewer-contract.md). Add domain-specific fields here if your
+[reviewer-contract.md](../references/reviewer-contract.md). Add domain-specific fields here if your
 reviewer needs them. For example, `reviewer-security` adds a `CWE/OWASP` field.
 
 ---
 
 ## Register in the topic-reviewer map
 
-Add a row to the table in [topic-reviewer-map.md](../skills/craft:review/topic-reviewer-map.md):
+Add a row to the table in [topic-reviewer-map.md](../skills/craft-review/topic-reviewer-map.md):
 
 - **Tag** — the tag name the topic-tagger will emit (e.g., `accessibility`).
 - **Description** — one sentence describing what code changes should trigger this tag. The
@@ -69,7 +69,7 @@ tagger emits the tag.
 
 ## Test it
 
-Run `/craft:review` on a branch whose diff clearly falls within the new reviewer's domain. Check the
+Run `/craft-review` on a branch whose diff clearly falls within the new reviewer's domain. Check the
 review report for the reviewer's name in the "Reviewers activated" list. If the reviewer does not
 appear, the topic-tagger did not emit the tag — re-read the Description column in the map and
 confirm the diff contains the kind of change the description targets.

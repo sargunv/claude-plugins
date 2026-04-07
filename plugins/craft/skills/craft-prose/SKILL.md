@@ -1,11 +1,11 @@
 ---
-name: craft:prose
-description: Write or edit prose for clarity, concision, and correctness using Strunk's Elements of Style. Use when the user needs to write, rewrite, or polish documentation, READMEs, migration guides, changelogs, error messages, UI copy, commit messages, or any text meant for human readers. Also activates as an optional pipeline step when a task involves prose alongside code.
+name: craft-prose
+description: This skill should be used when the user asks to "write documentation", "edit the README", "polish this text", "write a migration guide", "improve error messages", or needs to write, rewrite, or polish any prose meant for human readers (docs, changelogs, UI copy, commit messages). Also activates as an optional pipeline step when a task involves prose alongside code. Uses Strunk's Elements of Style.
 argument-hint: "[file path, glob pattern, or writing task description]"
 allowed-tools: Agent Bash Read Write Edit Glob Grep
 ---
 
-# /craft:prose — Write and Edit Prose
+# /craft-prose — Write and Edit Prose
 
 Arguments: $ARGUMENTS
 
@@ -13,7 +13,7 @@ Arguments: $ARGUMENTS
 
 ## Style Reference
 
-`${CLAUDE_PLUGIN_ROOT}/internal/elements-of-style.md` contains Strunk's _The Elements of Style_
+`${CLAUDE_PLUGIN_ROOT}/references/elements-of-style.md` contains Strunk's _The Elements of Style_
 (1918): 18 rules of usage and composition, plus a reference of commonly misused words. Read it
 before writing or editing prose.
 

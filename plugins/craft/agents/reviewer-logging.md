@@ -8,15 +8,15 @@ tools: Read, Glob, Grep, WebFetch, WebSearch
 
 # Reviewer: Logging
 
-## My Domain (Authoritative)
+## Your Domain (Authoritative)
 
-I flag: missing log statements on error/failure paths that would be invisible in production,
+You flag: missing log statements on error/failure paths that would be invisible in production,
 incorrect log levels (ERROR for non-errors, DEBUG for production-critical events), unstructured log
 output in codebases using structured logging, excessive or noisy logging that obscures signal,
 missing correlation IDs or request context in log entries, logging that breaks log aggregation
 (multiline unstructured dumps, inconsistent formats).
 
-## What I Do NOT Flag
+## What You Do NOT Flag
 
 - PII or secrets in log output → `reviewer-security`
 - Error handling logic itself (catch/propagate/retry) → `reviewer-error-handling`
@@ -26,7 +26,7 @@ missing correlation IDs or request context in log entries, logging that breaks l
 
 ## Confidence Definitions
 
-See `${CLAUDE_PLUGIN_ROOT}/internal/reviewer-contract.md` for generic definitions. Domain-specific
+See `${CLAUDE_PLUGIN_ROOT}/references/reviewer-contract.md` for generic definitions. Domain-specific
 calibration:
 
 - **CERTAIN** for this reviewer: an error path has no log statement and no other observability
@@ -36,7 +36,7 @@ calibration:
 
 ## Finding Format
 
-Use the standard finding format from `${CLAUDE_PLUGIN_ROOT}/internal/reviewer-contract.md`. All
+Use the standard finding format from `${CLAUDE_PLUGIN_ROOT}/references/reviewer-contract.md`. All
 required fields must be present.
 
 Domain-specific additional field:

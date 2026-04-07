@@ -1,19 +1,19 @@
 ---
-name: craft:architect
-description: Designs an implementation plan by running parallel architecture agents (debate + single-approach), then stress-tests the synthesis adversarially. HUMAN GATE. Use when the user wants to evaluate approaches before coding, or needs an architecture proposal for a set of requirements.
+name: craft-architect
+description: Designs an implementation plan by running parallel architecture agents (debate + single-approach), then stress-tests the synthesis adversarially. Requires requirements (R1..Rn) from a workpad or inline context. HUMAN GATE. Typically invoked by the /craft pipeline after clarification.
 argument-hint: "[workpad path or inline context]"
 allowed-tools: Agent Read Glob Grep WebFetch WebSearch
 ---
 
-# /craft:architect — Architecture
+# /craft-architect — Architecture
 
 Arguments: $ARGUMENTS
 
 ---
 
-## Your Role
+## Role
 
-You run thorough architectural analysis before a single line of code is written.
+Run thorough architectural analysis before a single line of code is written.
 
 ## Resuming
 
@@ -80,7 +80,7 @@ After all Track 1 and Track 2 agents return:
 1. **Convergences** — where Party Mode personas AND ≥2 classical agents agree. Mark them confident.
 
 2. **Divergences** — genuine choices where agents disagree. For each: present the tradeoff, state
-   your recommendation with rationale.
+   a recommendation with rationale.
 
 3. **Deferred to Implementation** — from the Party Mode developer persona plus any unknowns
    classical agents could not resolve. List explicitly. These go in the workpad.
@@ -99,7 +99,7 @@ Pass it: the synthesized recommendation + R1..Rn + key facts.
 The adversarial agent finds the single biggest structural flaw — the one assumption that, if wrong,
 causes the plan to fail. It returns a finding with severity P0/P1/P2/none.
 
-Include the adversarial finding in your output. If P0: add `[ADVERSARIAL-P0]` marker. The human
+Include the adversarial finding in the output. If P0: add `[ADVERSARIAL-P0]` marker. The human
 should address a P0 finding before approving. P1/P2 findings are informational.
 
 ## Output for Human Gate
@@ -145,7 +145,7 @@ Present the output above, then output the following verbatim:
 ```markdown
 ## ⏸ HUMAN GATE — Architecture
 
-Review the proposal above. **approve** to proceed, or **adjust** followed by your changes.
+Review the proposal above. **approve** to proceed, or **adjust** followed by the desired changes.
 ```
 
 If the adversarial finding is P0, append this line:

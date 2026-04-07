@@ -1,26 +1,26 @@
 ---
-name: craft:implement
-description: Executes an approved architecture plan — creates a branch, formalizes acceptance criteria, implements changes, and runs linters/tests. Defers out-of-scope discoveries. Use when a workpad has an approved architecture ready to implement.
+name: craft-implement
+description: Executes an approved architecture plan — creates a branch, formalizes acceptance criteria, implements changes, and runs linters/tests. Requires requirements (R1..Rn) and an approved architectural approach from a workpad or inline context. Defers out-of-scope discoveries. Typically invoked by the /craft pipeline after architecture approval.
 argument-hint: "[workpad path or inline approved approach]"
 allowed-tools: Agent Bash Read Write Edit Glob Grep WebFetch WebSearch
 ---
 
-# /craft:implement — Implementation
+# /craft-implement — Implementation
 
 Arguments: $ARGUMENTS
 
 ---
 
-## Your Role
+## Role
 
-You execute the approved plan precisely. Do not improve beyond scope. Do not refactor things you
-notice. Do not add features that were not approved.
+Execute the approved plan precisely. Do not improve beyond scope. Do not refactor things noticed in
+passing. Do not add features that were not approved.
 
-**Out-of-scope discipline — this is non-negotiable:** Every improvement you notice outside the
-approved plan goes into a `[DEFERRED]` block in the workpad. Never implement it. Scope expansion
-during implementation is the top cause of review findings, test failures, and extended review
-cycles. If you discover a pre-existing bug unrelated to this task, log it as `[PRE-EXISTING]` and
-continue. Do not fix it.
+**Out-of-scope discipline — this is non-negotiable:** Every improvement noticed outside the approved
+plan goes into a `[DEFERRED]` block in the workpad. Never implement it. Scope expansion during
+implementation is the top cause of review findings, test failures, and extended review cycles. If a
+pre-existing bug unrelated to this task is discovered, log it as `[PRE-EXISTING]` and continue. Do
+not fix it.
 
 ## Resuming
 
@@ -53,13 +53,13 @@ AC1: [from R1] [specific, testable condition]
 AC2: [from R2] [...]
 ```
 
-Every requirement Rn must map to at least one AC. If you cannot write an auto-verify method, mark it
+Every requirement Rn must map to at least one AC. If no auto-verify method can be written, mark it
 `[MANUAL-VERIFY]` — it will be flagged for human verification in review.
 
 After implementing each AC, add a completion note inline:
 
 ```
-AC1: [criterion]  ✓ DONE — [one sentence: how you verified it, e.g. "test passes", "grep confirms", "manually checked"]
+AC1: [criterion]  ✓ DONE — [one sentence: how verified, e.g. "test passes", "grep confirms", "manually checked"]
 ```
 
 This is what completion bar item 4 ("Every AC has a completion note") checks. For `[MANUAL-VERIFY]`
@@ -88,9 +88,9 @@ After each significant change, run the project's linter and tests. Use the comma
 if specified. Otherwise, determine the appropriate commands from the project's build files and
 toolchain.
 
-If a test fails that you did not touch: log it in the workpad under `### Pre-existing failures` as
+If a test fails that was not touched: log it in the workpad under `### Pre-existing failures` as
 `[PRE-EXISTING-FAILURE] file:line — description`. Do not fix it. Pre-existing failures do not block
-completion bar item 3 — only new failures introduced by your changes block it.
+completion bar item 3 — only new failures introduced by the current changes block it.
 
 ## Completion Bar
 

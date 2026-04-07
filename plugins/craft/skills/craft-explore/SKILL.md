@@ -1,11 +1,11 @@
 ---
-name: craft:explore
-description: Deep codebase exploration that spawns parallel sub-agents across architecture, change surface, data, and dependencies. Use when the user wants to understand how something works, map out what a change would touch, or research a codebase area before making decisions.
+name: craft-explore
+description: This skill should be used when the user asks to "explore the codebase", "how does this work", "what would this change touch", "map out the code", or wants to understand a codebase area before making decisions. Deep codebase exploration that spawns parallel sub-agents across architecture, change surface, data, and dependencies.
 argument-hint: "[issue URL, ID, or task description]"
 allowed-tools: Agent Read Glob Grep WebFetch WebSearch
 ---
 
-# /craft:explore — Codebase Exploration
+# /craft-explore — Codebase Exploration
 
 Arguments: $ARGUMENTS
 
@@ -13,11 +13,11 @@ Git context: !`git log --oneline -5 2>/dev/null || echo "(not a git repo)"`
 
 ---
 
-## Your Role
+## Role
 
-You are the exploration orchestrator. Build a dense, accurate picture of the codebase from multiple
-independent angles simultaneously. Output feeds the Clarify phase — dense signal here prevents
-wasted architecture cycles later.
+Orchestrate exploration to build a dense, accurate picture of the codebase from multiple independent
+angles simultaneously. Dense signal here prevents wasted cycles in downstream work (clarification,
+architecture, or direct implementation).
 
 ## Explorer Agents
 
@@ -90,8 +90,8 @@ the synthesis, trace back to the specific agent's output.
 ## Rules
 
 - Every Key Facts bullet must be specific with a file reference
-- Code Snippets must be actual code — if you cannot find it, say so explicitly
-- Key Files list is what the Clarify/Architect phases will read — be precise
+- Code Snippets must be actual code — if not found, say so explicitly
+- Key Files list drives downstream work — be precise
 - Do not include implementation recommendations — that is the architect's job
 - No human gate at the end of this phase
 

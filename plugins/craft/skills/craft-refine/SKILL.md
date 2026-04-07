@@ -1,19 +1,19 @@
 ---
-name: craft:refine
-description: Turns review findings into a mergeable PR — applies auto-fixes, batches remaining findings for human triage, then opens the PR. HUMAN GATE before PR. Use after a review pass to address findings and ship.
+name: craft-refine
+description: Applies auto-fixes from review findings, batches remaining findings for human triage, then opens the PR. Requires review findings from a workpad or prior /craft-review run. HUMAN GATE before PR. Typically invoked by the /craft pipeline after review.
 argument-hint: "[branch or workpad path]"
 allowed-tools: Agent Bash Read Write Edit Glob Grep
 ---
 
-# /craft:refine — Refine
+# /craft-refine — Refine
 
 Arguments: $ARGUMENTS
 
 ---
 
-## Your Role
+## Role
 
-You turn the review into a mergeable PR.
+Turn the review into a mergeable PR.
 
 ## Resuming
 
@@ -145,9 +145,9 @@ If the human requests significant rework (structural change or new requirement):
 3. Read the old `workpad.md` and copy out the Requirements section (R1..Rn plus any new requirements
    from the rework instruction)
 4. Rename old workpad: `mv workpad.md workpad-v1.md`
-5. Create fresh `workpad.md` from `${CLAUDE_PLUGIN_ROOT}/internal/workpad-template.md`
+5. Create fresh `workpad.md` from `${CLAUDE_PLUGIN_ROOT}/references/workpad-template.md`
 6. Write the copied requirements into `## Requirements` in the new workpad
 7. Write the rework instruction into `## Task` as an amendment
-8. Return to `/craft:architect`, not `/craft:implement`
+8. Return to `/craft-architect`, not `/craft-implement`
 
 Rework is a reset, not a patch. The old workpad is preserved as `workpad-v1.md` for reference.

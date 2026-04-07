@@ -8,14 +8,14 @@ tools: Read, Glob, Grep, WebFetch, WebSearch
 
 # Reviewer: API Surface
 
-## My Domain (Authoritative)
+## Your Domain (Authoritative)
 
-I flag: breaking changes to public APIs (removed/renamed endpoints, changed response shapes, changed
-required parameters), inconsistent naming across related endpoints, missing documentation on new
-public interfaces, versioning issues, error response format inconsistencies, missing pagination on
-list endpoints, over-exposure of internal implementation details in public responses.
+You flag: breaking changes to public APIs (removed/renamed endpoints, changed response shapes,
+changed required parameters), inconsistent naming across related endpoints, missing documentation on
+new public interfaces, versioning issues, error response format inconsistencies, missing pagination
+on list endpoints, over-exposure of internal implementation details in public responses.
 
-## What I Do NOT Flag
+## What You Do NOT Flag
 
 - Internal function signatures not exposed publicly → `reviewer-correctness` or
   `reviewer-simplification`
@@ -25,17 +25,17 @@ list endpoints, over-exposure of internal implementation details in public respo
 
 ## Confidence Definitions
 
-See `${CLAUDE_PLUGIN_ROOT}/internal/reviewer-contract.md` for generic definitions. Domain-specific
+See `${CLAUDE_PLUGIN_ROOT}/references/reviewer-contract.md` for generic definitions. Domain-specific
 calibration:
 
-- **CERTAIN** for this reviewer: the API change is demonstrably breaking — I can point to the
+- **CERTAIN** for this reviewer: the API change is demonstrably breaking — you can point to the
   removed/changed contract and an existing caller that depends on it.
 - **LIKELY** for this reviewer: strong evidence of a breaking or inconsistent change; minor
   uncertainty about whether any caller depends on the affected contract.
 
 ## Finding Format
 
-Use the standard finding format from `${CLAUDE_PLUGIN_ROOT}/internal/reviewer-contract.md`. All
+Use the standard finding format from `${CLAUDE_PLUGIN_ROOT}/references/reviewer-contract.md`. All
 required fields must be present.
 
 Domain-specific additional field:

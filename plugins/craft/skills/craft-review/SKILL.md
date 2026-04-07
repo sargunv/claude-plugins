@@ -1,11 +1,11 @@
 ---
-name: craft:review
-description: Multi-reviewer code review that topic-tags the diff, spawns targeted reviewers in parallel, verifies acceptance criteria, and scores findings. Use when the user wants a code review on any branch, PR, or diff — "review my code", "check this branch", "what's wrong with my changes".
+name: craft-review
+description: This skill should be used when the user asks to "review my code", "check this branch", "what's wrong with my changes", "review the PR", or wants a code review on any branch, PR, or diff. Multi-reviewer code review that topic-tags the diff, spawns targeted reviewers in parallel, verifies acceptance criteria, and scores findings.
 argument-hint: "[branch, diff target, or workpad path]"
 allowed-tools: Agent Bash Read Glob Grep WebFetch WebSearch
 ---
 
-# /craft:review — Review
+# /craft-review — Review
 
 Arguments: $ARGUMENTS
 
@@ -16,9 +16,9 @@ Arguments: $ARGUMENTS
 - [topic-reviewer-map.md](topic-reviewer-map.md) — maps topic tags to reviewer agents; read during
   reviewer selection
 
-## Your Role
+## Role
 
-You orchestrate a multi-angle review that proves the implementation satisfies its requirements.
+Orchestrate a multi-angle review that proves the implementation satisfies its requirements.
 
 ## Resuming
 
@@ -29,7 +29,7 @@ requirements traceability and AC verification. If not, proceed without it and no
 
 Before starting: read the workpad and check the Completion Bar section. If any of the 6 items are
 unchecked, stop and report: "Implementation completion bar is incomplete — items [N, N] not checked.
-Review cannot proceed until implementation is verified complete." (Exception: if `/craft:review` is
+Review cannot proceed until implementation is verified complete." (Exception: if `/craft-review` is
 called directly on an ad-hoc branch without a workpad, skip this check and note "No workpad —
 completion bar check skipped.")
 
@@ -69,8 +69,8 @@ Read the topic-reviewer map to select reviewers. Each reviewer agent has a match
 `reviewer-correctness`, `reviewer-simplification`, and `reviewer-requirements`.
 
 For `reviewer-idioms`: spawn one instance per `idioms-*` tag emitted by the topic-tagger. Pass the
-stack name as the parameter (e.g., tag `idioms-go` → spawn reviewer-idioms with "You are reviewing
-Go idioms.").
+stack name as the parameter (e.g., tag `idioms-go` → spawn reviewer-idioms with "Review Go
+idioms.").
 
 **Spawn for each other matching tag** (from topic-reviewer-map.md — read the Reviewer(s) column):
 each conditional tag emitted by the topic-tagger maps to the reviewer(s) in that column.
@@ -90,13 +90,13 @@ receives:
 - The diff (full)
 - Full content of the changed files (read them, do not summarize)
 - Their agent definition (focus + domain exclusions)
-- Requirements R1..Rn from workpad (≤300 words)
-- Implementation summary from workpad (≤200 words)
+- Requirements R1..Rn from workpad (≤300 words), if available
+- Implementation summary from workpad (≤200 words), if available
 
 Each reviewer returns structured findings using the finding format defined in their agent file.
 
-For `reviewer-idioms`: pass the stack name as a parameter. Example: "You are reviewing Go idioms.
-The stack is: Go."
+For `reviewer-idioms`: pass the stack name as a parameter. Example: "Review Go idioms. The stack
+is: Go."
 
 ## Step 5 — Cross-Review Corroboration
 
@@ -112,6 +112,9 @@ After all reviewers return, scan for the same finding across multiple outputs:
   other reviewer(s) in parentheses
 
 ## Step 6 — AC Verification
+
+Skip this step if no workpad or acceptance criteria exist. Note in the Review Report: "No acceptance
+criteria — AC verification skipped."
 
 Spawn the **review-verifier** sub-agent using the Agent tool with
 `subagent_type: "craft:review-verifier"`.
@@ -182,7 +185,7 @@ Score: [0–100] ([pass/needs-attention]) Reviewers activated: [list]
 
 ## Workpad Update
 
-Write the review summary to `workpad.md` under `## Review`:
+If a workpad exists, write the review summary to `workpad.md` under `## Review`:
 
 - Score
 - Reviewers activated list
@@ -190,3 +193,6 @@ Write the review summary to `workpad.md` under `## Review`:
 - AC Verification list
 
 Then update the Phase Log: review → done, with timestamp and score.
+
+If no workpad exists (standalone invocation), skip this step — the review report in the conversation
+is the deliverable.

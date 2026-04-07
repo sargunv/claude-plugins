@@ -20,7 +20,7 @@ tags — no prose, no explanation. Do not select reviewers or summarize findings
 ## Tag Vocabulary
 
 The complete tag vocabulary and emit descriptions are in
-`${CLAUDE_PLUGIN_ROOT}/skills/craft:review/topic-reviewer-map.md`. Read it before tagging. Choose
+`${CLAUDE_PLUGIN_ROOT}/skills/craft-review/topic-reviewer-map.md`. Read it before tagging. Choose
 only from the tags listed there. Do not invent new ones.
 
 You are identifying conditional tags. Do not emit `correctness`, `simplification`, or `requirements`

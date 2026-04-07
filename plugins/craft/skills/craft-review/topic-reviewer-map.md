@@ -12,7 +12,7 @@ reads the Reviewer(s) column to decide which agents to launch.
 ## Adding a reviewer
 
 1. Create `agents/reviewer-<name>.md` following the contract in
-   `${CLAUDE_PLUGIN_ROOT}/internal/reviewer-contract.md`
+   `${CLAUDE_PLUGIN_ROOT}/references/reviewer-contract.md`
 2. Add a row to this table, or add the reviewer to an existing row
 3. Done. No other files need changing.
 
