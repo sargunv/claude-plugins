@@ -21,7 +21,7 @@ If `$ARGUMENTS` is a workpad path, read it to restore context (task description,
 before writing questions. The human gate fires again — that is expected.
 
 **Commitment principle:** Never present "Option A or Option B" without a recommendation. Say "I
-recommend A because X — confirm?" The human's job is to say yes or adjust, not to decide from
+recommend A because X — approve?" The human's job is to approve or adjust, not to decide from
 scratch. Open-ended questions without recommendations force the human to do the architect's job.
 
 ## Before Writing Questions
@@ -92,7 +92,7 @@ Present the questions, then output the following verbatim:
 ```markdown
 ## ⏸ HUMAN GATE — Clarification
 
-Answer each question above. For questions with a recommendation, **yes** accepts it. For
+Answer each question above. For questions with a recommendation, **approve** accepts it. For
 `[NEEDS CLARIFICATION]` questions, provide an answer directly.
 ```
 

@@ -132,6 +132,15 @@ similar), follow it. Otherwise use this default structure:
 [How the changes were tested]
 ```
 
+Output the following verbatim:
+
+```markdown
+## ⏸ HUMAN GATE — PR
+
+Review the PR summary above. **open** to open the draft PR, or **adjust** followed by the desired
+changes.
+```
+
 After approval, open a draft PR/MR using the project's code review tool (e.g.,
 `gh pr create --draft` for GitHub). If the tool is unavailable or fails, output the title and body
 so the human can open it manually. Record the URL (or failure reason) in the workpad.
