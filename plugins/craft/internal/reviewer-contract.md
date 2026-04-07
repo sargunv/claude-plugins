@@ -3,44 +3,6 @@
 Every reviewer agent must implement this contract. The review orchestrator depends on consistent
 section names, finding format, and severity definitions across all reviewers.
 
----
-
-## Required Sections
-
-### 1. `## My Domain (Authoritative)`
-
-This section declares every class of issue the reviewer is responsible for. Other reviewers read the
-domain lists of all active reviewers to determine whether a finding is theirs or should be deferred.
-"Authoritative" means that if a finding falls in this domain, this reviewer owns it — another
-reviewer who notices the same issue must defer it to the `## Out of Scope` section rather than
-filing it as a finding. List specific failure modes, not broad categories. "Missing null guard on
-user input at API boundary" is specific; "null safety issues" is not.
-
-### 2. `## What I Do NOT Flag`
-
-This section lists every domain this reviewer defers to another reviewer, using the format:
-`issue description → reviewer-name`. Example: `Language/framework idioms → reviewer-idioms`. This
-section is a hard instruction to the agent: any observation that falls in a listed category must not
-appear as a finding. Without explicit exclusions, reviewers drift into adjacent domains and the same
-issue appears multiple times in the report, inflating severity scores and obscuring the real
-findings.
-
-### 3. `## Confidence Definitions`
-
-This section narrows the generic CERTAIN and LIKELY definitions below to what is achievable given
-the evidence this reviewer can access. State concretely what "CERTAIN" means for this domain (e.g.,
-"I can point to the exact line where the bug exists and describe the input that triggers it") and
-what "LIKELY" means (e.g., "I have traced the code path but have not fully verified the trigger
-condition"). Do not restate the generic definitions verbatim; add domain-specific calibration.
-
-### 4. `## Finding Format`
-
-This section states that the reviewer uses the standard finding format from this document. Add
-domain-specific fields here when the standard format is insufficient. For example,
-`reviewer-security` adds a `CWE/OWASP` reference field. Do not remove or rename standard fields.
-
----
-
 ## Standard Finding Format
 
 All reviewers use this format. Every field is required.
