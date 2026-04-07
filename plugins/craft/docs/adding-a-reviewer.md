@@ -29,9 +29,10 @@ for the full specification of each section and the standard finding format.
 name the exact failure modes, not broad categories. Other reviewers use this list to determine
 whether a finding is yours or theirs.
 
-**`## What I Do NOT Flag`** — List every domain this reviewer defers to, using the format
-`issue type → reviewer-name`. This section is a hard instruction to the agent, not a suggestion.
-Without it, reviewers drift into each other's territory and the same finding appears multiple times.
+**`## What You Never Flag`** — List issue types that are genuinely outside this reviewer's
+visibility or expertise. Keep this list short — only exclude things the reviewer could not
+reasonably notice while doing its core job. Don't exclude something just because another reviewer
+also covers it; some overlap at domain boundaries is fine.
 
 **`## Confidence Definitions`** — State what CERTAIN and LIKELY mean for this specific domain. The
 generic definitions in [reviewer-contract.md](../references/reviewer-contract.md) give the baseline;
@@ -82,9 +83,9 @@ confirm the diff contains the kind of change the description targets.
 role attributes, keyboard traps, insufficient color contrast" gives the agent a testable checklist.
 "Reviews accessibility" does not.
 
-**Write the exclusion list before writing the domain.** Knowing what the reviewer does NOT flag
-clarifies the domain boundary and prevents overlap with existing reviewers. Read the other reviewer
-files first.
+**Keep the exclusion list short.** Only exclude things genuinely outside the reviewer's visibility.
+Some overlap at domain boundaries is fine — corroborated findings get higher priority. Read the
+other reviewer files to understand coverage, not to carve out non-overlapping territories.
 
 **Most findings are P2 or P3.** Reserve P1 for issues that block a reasonable user from completing a
 task. P0 is for issues that cause data loss, security breaches, or crashes in production. Reviewers

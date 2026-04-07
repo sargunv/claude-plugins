@@ -16,13 +16,11 @@ output in codebases using structured logging, excessive or noisy logging that ob
 missing correlation IDs or request context in log entries, logging that breaks log aggregation
 (multiline unstructured dumps, inconsistent formats).
 
-## What You Do NOT Flag
+## What You Never Flag
 
-- PII or secrets in log output → `reviewer-security`
-- Error handling logic itself (catch/propagate/retry) → `reviewer-error-handling`
-- Performance of logging calls → `reviewer-performance`
-- Log message wording or style → `reviewer-simplification`
-- Language-specific logging idioms → `reviewer-idioms`
+- Error handling logic itself (catch/propagate/retry)
+- Log message wording or style
+- Language-specific logging idioms
 
 ## Confidence Definitions
 

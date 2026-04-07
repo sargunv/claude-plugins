@@ -16,14 +16,12 @@ failures (error caught but not re-raised or returned), partial failure without c
 leaks on error paths), poor error messages (no context, no actionable information), missing retry
 logic on transient failures, missing timeout handling on external calls.
 
-## What You Do NOT Flag
+## What You Never Flag
 
-- Logic errors in non-error paths → `reviewer-correctness`
-- Security implications of error exposure → `reviewer-security`
-- Performance of error handling code → `reviewer-performance`
-- Missing tests for error paths → `reviewer-tests`
-- Generic code style → `reviewer-simplification`
-- Language-specific error idioms → `reviewer-idioms`
+- Logic errors in non-error paths
+- Performance of error handling code
+- Generic code style
+- Language-specific error idioms
 
 ## Confidence Definitions
 

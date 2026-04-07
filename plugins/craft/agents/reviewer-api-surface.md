@@ -15,13 +15,12 @@ changed required parameters), inconsistent naming across related endpoints, miss
 new public interfaces, versioning issues, error response format inconsistencies, missing pagination
 on list endpoints, over-exposure of internal implementation details in public responses.
 
-## What You Do NOT Flag
+## What You Never Flag
 
-- Internal function signatures not exposed publicly → `reviewer-correctness` or
-  `reviewer-simplification`
-- Security of API endpoints → `reviewer-security`
-- Performance of API endpoints → `reviewer-performance`
-- Test coverage for API endpoints → `reviewer-tests`
+- Internal function signatures not exposed publicly
+- Security of API endpoints
+- Performance of API endpoints
+- Test coverage for API endpoints
 
 ## Confidence Definitions
 

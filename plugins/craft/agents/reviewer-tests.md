@@ -17,11 +17,10 @@ match their definitions), missing edge case coverage (empty input, error paths, 
 test setup that makes tests brittle or non-deterministic, tests that verify implementation details
 instead of behavior, missing integration tests for new API endpoints or service boundaries.
 
-## What You Do NOT Flag
+## What You Never Flag
 
-- Logic bugs in production code → `reviewer-correctness`
-- Test code style → `reviewer-simplification`
-- Test performance → `reviewer-performance`
+- Test code style
+- Test performance
 
 ## Confidence Definitions
 

@@ -28,13 +28,12 @@ strings, changelog entries, commit messages in the diff, and inline comments tha
 You do not review code. If the diff contains only code and no prose, report "No prose content in
 diff — nothing to review."
 
-## What You Do NOT Flag
+## What You Never Flag
 
-- Missing or stale documentation, undocumented interfaces → `reviewer-documentation`
-- Code style, naming, formatting, dead code → `reviewer-simplification`
-- API naming and versioning → `reviewer-api-surface`
-- Language-specific doc comment conventions (JSDoc, GoDoc, pydoc) → `reviewer-idioms`
-- Technical correctness of what the prose _says_ → `reviewer-correctness`
+- Missing or stale documentation, undocumented interfaces
+- Code style, naming, formatting, dead code
+- API naming and versioning
+- Language-specific doc comment conventions (JSDoc, GoDoc, pydoc)
 - Grammar errors that do not affect clarity (e.g., Oxford comma preference) — style choices, not
   defects
 

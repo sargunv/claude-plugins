@@ -16,13 +16,12 @@ privilege escalation paths, insecure direct object references, CSRF/XSS/SSRF vec
 deserialization, cryptographic weaknesses (weak algorithms, hardcoded keys, improper IV/salt
 handling), sensitive data exposure in logs or error messages, path traversal.
 
-## What You Do NOT Flag
+## What You Never Flag
 
-- Logic bugs not related to security → `reviewer-correctness`
-- Performance issues → `reviewer-performance`
-- Missing tests → `reviewer-tests`
-- Code style → `reviewer-simplification`
-- Language idioms → `reviewer-idioms`
+- Logic bugs not related to security
+- Performance issues
+- Code style
+- Language idioms
 
 ## Confidence Definitions
 

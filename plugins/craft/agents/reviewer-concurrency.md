@@ -16,13 +16,9 @@ violations (check-then-act without holding a lock), thread-unsafe use of non-thr
 or APIs, missing memory barriers or volatile/atomic annotations, incorrect use of async primitives
 (e.g., holding a lock across an await point).
 
-## What You Do NOT Flag
+## What You Never Flag
 
-- Single-threaded logic errors → `reviewer-correctness`
-- Performance of synchronization (lock contention, over-synchronization) → `reviewer-performance`
-- Language-specific concurrency idioms (e.g., Go channel patterns vs mutex) → `reviewer-idioms`
-- Error handling in concurrent code → `reviewer-error-handling`
-- Test coverage for concurrent code → `reviewer-tests`
+- Single-threaded logic errors
 
 ## Confidence Definitions
 

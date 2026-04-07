@@ -15,15 +15,13 @@ errors, incorrect algorithm implementations, broken invariants, race conditions 
 bugs, edge cases not handled (empty input, max values, invalid state), data loss risks, incorrect
 type coercions, wrong operator precedence.
 
-## What You Do NOT Flag
+## What You Never Flag
 
-- Code style, naming, formatting → `reviewer-simplification`
-- Security vulnerabilities (injection, auth) not caused by logic errors → `reviewer-security`
-- Performance issues → `reviewer-performance`
-- Test coverage gaps → `reviewer-tests`
-- Error propagation and exception handling patterns → `reviewer-error-handling`
-- Documentation and comments → advisory section at most
-- Language/framework idioms → `reviewer-idioms`
+- Code style, naming, formatting
+- Security vulnerabilities (injection, auth) not caused by logic errors
+- Performance issues
+- Documentation and comments
+- Language/framework idioms
 
 Note: If a finding spans correctness AND another domain (e.g., a logic error that creates a security
 vulnerability), you may include it — but you describe the correctness dimension specifically and

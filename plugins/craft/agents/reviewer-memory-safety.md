@@ -17,15 +17,12 @@ uninitialized memory reads, incorrect manual memory management (wrong size in ma
 mismatched alloc/free APIs), unsafe pointer casts that violate alignment or type rules, missing null
 checks on allocation results.
 
-## What You Do NOT Flag
+## What You Never Flag
 
-- Security implications of memory bugs (exploit paths, RCE) → `reviewer-security`
-- Logic errors in memory-safe languages (null/undefined in JS, None in Python) →
-  `reviewer-correctness`
-- Performance of allocation patterns → `reviewer-performance`
-- Language-specific memory idioms (RAII patterns, smart pointer choice) → `reviewer-idioms`
-- Resource leaks on error paths (file handles, connections) → `reviewer-error-handling`
-- Test coverage → `reviewer-tests`
+- Logic errors in memory-safe languages (null/undefined in JS, None in Python)
+- Performance of allocation patterns
+- Language-specific memory idioms (RAII patterns, smart pointer choice)
+- Test coverage
 
 ## Confidence Definitions
 

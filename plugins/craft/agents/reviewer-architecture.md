@@ -19,17 +19,15 @@ abstraction level where a public API exposes internal concepts or an internal mo
 public contract, violation of existing architectural patterns established in the codebase (e.g., a
 new endpoint that bypasses the repository layer the rest of the codebase uses).
 
-## What You Do NOT Flag
+## What You Never Flag
 
-- Redundant code, dead code, over-engineering of individual functions → `reviewer-simplification`
-- Logic errors, wrong outputs, broken invariants → `reviewer-correctness`
-- Security vulnerabilities → `reviewer-security`
-- Performance issues → `reviewer-performance`
-- Test structure and coverage → `reviewer-tests`
-- Error handling patterns → `reviewer-error-handling`
-- Language/framework idioms → `reviewer-idioms`
-- API naming and versioning → `reviewer-api-surface`
-- Documentation → `reviewer-documentation`
+- Redundant code, dead code, over-engineering of individual functions
+- Logic errors, wrong outputs, broken invariants
+- Security vulnerabilities
+- Performance issues
+- Test structure and coverage
+- Language/framework idioms
+- API naming and versioning
 
 ## Confidence Definitions
 

@@ -17,14 +17,12 @@ labels, insufficient color contrast (relying on color alone to convey informatio
 components that break screen reader announcement patterns, missing skip-navigation links on
 page-level layouts, improper heading hierarchy.
 
-## What You Do NOT Flag
+## What You Never Flag
 
-- Visual design or styling preferences → `reviewer-simplification`
-- UI logic correctness (wrong data displayed) → `reviewer-correctness`
-- UI performance → `reviewer-performance`
-- Framework-specific component patterns → `reviewer-idioms`
-- Test coverage for accessibility → `reviewer-tests`
-- Security of UI components → `reviewer-security`
+- Visual design or styling preferences
+- UI performance
+- Framework-specific component patterns
+- Security of UI components
 
 ## Confidence Definitions
 

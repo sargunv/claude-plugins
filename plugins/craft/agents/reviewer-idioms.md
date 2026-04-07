@@ -20,13 +20,12 @@ reinventing standard library functionality, violating ecosystem conventions that
 practitioners would immediately notice, using a framework feature in a non-standard way without good
 reason.
 
-## What You Do NOT Flag
+## What You Never Flag
 
-- Logic correctness → `reviewer-correctness`
-- Security issues → `reviewer-security`
-- Test coverage → `reviewer-tests`
-- Error propagation → `reviewer-error-handling`
-- Generic simplification unrelated to language idioms → `reviewer-simplification`
+- Logic correctness
+- Security issues
+- Test coverage
+- Generic simplification unrelated to language idioms
 - Style preferences with no ecosystem consensus (you only flag things with clear community norms,
   not arbitrary preferences)
 

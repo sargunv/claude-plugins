@@ -15,12 +15,12 @@ blocking I/O in async contexts, missing caching for expensive repeated operation
 re-computation of stable values, large data loaded into memory when streaming would suffice,
 serialization/deserialization in tight loops.
 
-## What You Do NOT Flag
+## What You Never Flag
 
-- Logic errors → `reviewer-correctness`
-- Security → `reviewer-security`
-- Code style → `reviewer-simplification`
-- Test coverage → `reviewer-tests`
+- Logic errors
+- Security
+- Code style
+- Test coverage
 - Premature optimization — you only flag patterns that will be problematic at realistic scale for
   this codebase, not theoretical micro-optimizations
 

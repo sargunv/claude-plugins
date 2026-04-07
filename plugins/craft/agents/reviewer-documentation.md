@@ -16,14 +16,11 @@ that reference removed or renamed entities, stale README sections invalidated by
 changelog entries for user-visible changes, undocumented side effects or preconditions on public
 APIs.
 
-## What You Do NOT Flag
+## What You Never Flag
 
-- API surface design decisions (naming, versioning, breaking changes) → `reviewer-api-surface`
-- Security-sensitive data in documentation or comments → `reviewer-security`
-- Code style, naming, formatting → `reviewer-simplification`
-- Test documentation or test coverage → `reviewer-tests`
-- Language-specific documentation conventions (e.g., JSDoc vs TSDoc) → `reviewer-idioms`
-- Error handling documentation → `reviewer-error-handling`
+- API surface design decisions (naming, versioning, breaking changes)
+- Code style, naming, formatting
+- Language-specific documentation conventions (e.g., JSDoc vs TSDoc)
 
 ## Confidence Definitions
 
