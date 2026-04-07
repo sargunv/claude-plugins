@@ -77,17 +77,21 @@ commits to exactly ONE approach. No hedging. No "it depends."
 
 After all Track 1 and Track 2 agents return:
 
-1. **Convergences** — where Party Mode personas AND ≥2 classical agents agree. Mark them confident.
+1. **Per-agent summaries** — distill each classical agent's proposal into a 2-3 sentence summary
+   capturing what it does and how. Incorporate insights from the Party Mode tradeoff map (use
+   convergences to strengthen shared elements, use divergences to surface genuine choices).
 
-2. **Divergences** — genuine choices where agents disagree. For each: present the tradeoff, state
-   a recommendation with rationale.
+2. **Tradeoffs comparison** — build a comparison table across approaches. Include dimensions where
+   approaches meaningfully differ: scope of change, complexity, risk, and any requirements where
+   coverage diverges. Omit dimensions where all approaches agree.
 
 3. **Deferred to Implementation** — from the Party Mode developer persona plus any unknowns
    classical agents could not resolve. List explicitly. These go in the workpad.
 
-4. **Recommended approach** — one concrete synthesis recommendation. Not a committee compromise. An
-   actual decision with rationale. Include: files to create/modify, test strategy, requirement
-   coverage list (R1..Rn × approach).
+4. **Recommendation** — pick the single best approach. Combining elements from multiple approaches
+   is allowed when it produces a stronger plan, but never as a compromise to avoid deciding.
+   Include: rationale, concrete implementation differences vs. alternatives, files to create/modify,
+   and test strategy.
 
 ## Adversarial Stress Test
 
@@ -107,18 +111,41 @@ should address a P0 finding before approving. P1/P2 findings are informational.
 ```markdown
 ## Architecture Proposal
 
-### Recommended Approach: [name]
+### Approaches Considered
 
-[2-paragraph description]
+**Minimal:** [2-3 sentence summary of what this approach does and how]
 
-### Requirement Coverage
+**Pragmatic:** [2-3 sentence summary] _(omit if not spawned)_
 
-- R1: [statement] — [covered by]: [how]
-- R2: ...
+**Clean/Robust:** [2-3 sentence summary] _(omit if not spawned)_
 
-### Key Trade-offs Resolved
+**Performance:** [2-3 sentence summary] _(include if spawned)_
 
-- [Divergence]: [Decision] — [Rationale]
+**Incremental:** [2-3 sentence summary] _(include if spawned)_
+
+### Tradeoffs
+
+For each dimension where approaches meaningfully differ (scope, complexity, risk, requirement
+coverage), describe the tradeoff as prose:
+
+- **[Dimension]:** [Approach A] does [X], while [Approach B] does [Y]. [Why it matters.]
+- **R3 coverage:** [Approach A] only partially covers this because [reason]. [Approach B] handles it
+  fully via [mechanism].
+- ...
+
+_(Include an entry for each requirement where approaches diverge in coverage. Omit requirements all
+approaches cover identically.)_
+
+### Recommendation: [approach name]
+
+**Why this approach:** [1-2 paragraphs explaining why this approach wins given the requirements and
+codebase context. Reference specific tradeoffs from the table above.]
+
+**Concrete implementation differences vs. alternatives:**
+
+- [Alternative approach]: [specific difference — e.g., "adds an adapter layer in `pkg/auth/` that
+  Minimal avoids by reusing the existing middleware directly"]
+- ...
 
 ### Implementation Plan
 
@@ -134,8 +161,9 @@ Test strategy: [what to test and how]
 
 ### Adversarial Finding
 
-**Severity:** [P0 / P1 / P2 / none] [Finding text] **Mitigation:** [how addressed in plan, or
-"accepted risk with rationale"]
+**Severity:** [P0 / P1 / P2 / none] [Finding text] **Applies to:** [whether this risk is specific to
+the recommended approach or shared across all] **Mitigation:** [how addressed in plan, or "accepted
+risk with rationale"]
 ```
 
 ## Human Gate
@@ -158,6 +186,6 @@ plan or explicitly accepting the risk.
 Wait for the human to respond before proceeding.
 
 After approval: write the full architectural decision to `workpad.md` under
-`## Architectural Decision`. Include ALL subsections: chosen approach, requirement coverage,
-trade-offs, deferred items, adversarial finding, **files to create/modify**, and **test strategy**.
-The implement phase requires all of these to proceed.
+`## Architectural Decision`. The implement phase requires every subsection to proceed: approaches
+considered, tradeoffs comparison, recommendation with rationale, concrete implementation
+differences, deferred items, adversarial finding, **files to create/modify**, and **test strategy**.

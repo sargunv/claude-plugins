@@ -95,8 +95,8 @@ receives:
 
 Each reviewer returns structured findings using the finding format defined in their agent file.
 
-For `reviewer-idioms`: pass the stack name as a parameter. Example: "Review Go idioms. The stack
-is: Go."
+For `reviewer-idioms`: pass the stack name as a parameter. Example: "Review Go idioms. The stack is:
+Go."
 
 ## Step 5 — Cross-Review Corroboration
 

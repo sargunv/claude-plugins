@@ -136,6 +136,31 @@ After approval, open a draft PR/MR using the project's code review tool (e.g.,
 `gh pr create --draft` for GitHub). If the tool is unavailable or fails, output the title and body
 so the human can open it manually. Record the URL (or failure reason) in the workpad.
 
+## Step 7 — Wrap-up
+
+After the PR is open, present a wrap-up prompt. If deferred findings exist, include them:
+
+```markdown
+## Wrap-up
+
+**Deferred findings:** This task deferred [N] items.
+
+- [P1] (review) Missing transaction on multi-table write
+- [P2] (implement) Inconsistent error response shape
+- ...
+
+Would you like to file these as issues in your tracker? If so, specify the tool (e.g., GitHub
+Issues, Linear, Jira) and any labels or project to apply.
+
+**Workpad:** The workpad at `workpad.md` contains the full task history (requirements, architecture
+decision, review findings, deferred items). Would you like to keep it, or clean it up?
+```
+
+If no deferred findings exist, skip the deferred section and only ask about the workpad.
+
+Act on the human's response: file issues using the appropriate CLI tool (e.g., `gh issue create`),
+clean up or preserve the workpad as requested.
+
 ## Rework Protocol
 
 If the human requests significant rework (structural change or new requirement):
