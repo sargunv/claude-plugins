@@ -51,16 +51,16 @@ Collect all `human-triage` findings.
 If there are zero human-triage findings, skip to Step 4 (second review round check). Output: "No
 human-triage findings. Proceeding to PR."
 
-Otherwise, present them in a single compact table, sorted by severity (P0 first):
+Otherwise, present them in a single compact list, sorted by severity (P0 first):
 
 ```
 Human triage required (N findings):
 
-1. [P0] `auth.ts:88` — JWT not validated on refresh path (correctness)
-2. [P1] `db.ts:14` — Missing transaction on multi-table write (correctness)
-3. [P2] `api.ts:33` — Inconsistent error response shape (api-surface)
-4. [P2] `auth.ts:102` — Token refresh doesn't rotate refresh token (security)
-5. [P3] `utils.ts:7` — Function does two things, could be split (simplification)
+1. [P0, medium] `auth.ts:88` — JWT not validated on refresh path (correctness)
+2. [P1, small] `db.ts:14` — Missing transaction on multi-table write (correctness)
+3. [P2, trivial] `api.ts:33` — Inconsistent error response shape (api-surface)
+4. [P2, small] `auth.ts:102` — Token refresh doesn't rotate refresh token (security)
+5. [P3, trivial] `utils.ts:7` — Function does two things, could be split (simplification)
 
 Reply format: "fix 1-2, defer 3-4, reject 5" or per-item: "1=fix, 2=fix, 3=defer, 4=fix, 5=reject"
 ```

@@ -163,10 +163,10 @@ Score: [0–100] ([pass/needs-attention]) Reviewers activated: [list]
 
 ### Findings
 
-- **F-1** [P0] `auth.ts:88` — JWT not validated on refresh (correctness, human-triage)
+- **F-1** [P0] `auth.ts:88` — JWT not validated on refresh (correctness, medium, human-triage)
   [CORROBORATED]
-- **F-2** [P1] `utils.ts:12` — Null dereference on empty list (correctness, auto-fix)
-- **F-3** [P2] `api.ts:55` — Missing return type annotation (types, auto-fix)
+- **F-2** [P1] `utils.ts:12` — Null dereference on empty list (correctness, trivial, auto-fix)
+- **F-3** [P2] `api.ts:55` — Missing return type annotation (types, trivial, auto-fix)
 
 ### AC Verification
 
@@ -195,4 +195,6 @@ If a workpad exists, write the review summary to `workpad.md` under `## Review`:
 Then update the Phase Log: review → done, with timestamp and score.
 
 If no workpad exists (standalone invocation), skip this step — the review report in the conversation
-is the deliverable.
+is the deliverable. If the review produced findings, append:
+
+> Run `/craft-refine` to apply auto-fixes and triage the remaining findings.

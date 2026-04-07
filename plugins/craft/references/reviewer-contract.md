@@ -10,9 +10,9 @@ All reviewers use this format. Every field is required.
 ```markdown
 ### F-[N]: [concise title]
 
-**File:** `path/to/file:line` **Severity:** [see severity definitions below] **Action:** auto-fix |
-human-triage **Confidence:** CERTAIN | LIKELY | POSSIBLE **Confidence basis:** [one sentence
-explaining the confidence rating]
+**File:** `path/to/file:line` **Severity:** [see severity definitions below] **Effort:** trivial |
+small | medium | large **Action:** auto-fix | human-triage **Confidence:** CERTAIN | LIKELY |
+POSSIBLE **Confidence basis:** [one sentence explaining the confidence rating]
 
 **Finding:** [what is wrong — describe the problem, not the fix]
 
@@ -25,9 +25,9 @@ explaining the confidence rating]
 **Fix:** [specific and concrete — a code snippet if the fix is ≤8 lines, prose if longer]
 ```
 
-Every field must be present in every finding. The review orchestrator parses the finding table from
-these fields; a missing field causes the finding to be dropped. The corroboration pass and
-independent verification pass also depend on consistent file:line references.
+Every field must be present in every finding. The review orchestrator parses findings from these
+fields; a missing field causes the finding to be dropped. The corroboration pass and independent
+verification pass also depend on consistent file:line references.
 
 ---
 
@@ -45,17 +45,33 @@ independent verification pass also depend on consistent file:line references.
 
 ## Action Classification
 
-`auto-fix` — the fix is clear, unambiguous, and requires no design judgment. The refine phase
-applies these without human input. Use `auto-fix` when the correct code can be written from the
-finding description alone, with no tradeoffs to weigh.
+`auto-fix` — the refine phase applies these without human input. Use `auto-fix` for findings with
+effort `medium` or smaller where the fix does not require a design decision or involve a tradeoff.
+Most findings should be auto-fix. Classify as auto-fix even if the human might choose to defer.
 
-`human-triage` — the fix requires a design decision, involves a tradeoff, or is legitimately
-deferrable. The refine phase presents these to the human in a batch table. Use `human-triage` for
-anything where the right answer is not obvious, where fixing it might affect other parts of the
-system, or where the human may reasonably choose to defer or reject the finding.
+`human-triage` — the refine phase presents these to the human in a batch list. Use `human-triage`
+only when the finding has effort `large`, OR the fix requires a design decision or involves a
+tradeoff (at any effort level).
 
-When the classification is uncertain, use `human-triage`. Misclassifying a `human-triage` finding as
-`auto-fix` causes the refine phase to make a design decision without human input.
+When the classification is uncertain and the effort is `medium` or smaller, prefer `auto-fix`.
+Reserve `human-triage` for cases where the human needs to make a judgment call or where the fix is
+large enough to warrant explicit approval.
+
+---
+
+## Effort Estimates
+
+`trivial` — one-line change, rename, or deletion. No thinking required.
+
+`small` — a few lines in one file. Straightforward and localized.
+
+`medium` — changes across multiple locations or requires some design thought.
+
+`large` — structural change, new abstractions, or cross-cutting modifications across multiple
+modules.
+
+Effort estimates help the human make informed triage decisions (fix vs. defer). Estimate the effort
+to fix the root cause, not just to silence the symptom.
 
 ---
 
