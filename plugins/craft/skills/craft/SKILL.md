@@ -41,41 +41,20 @@ orchestrator owns task state; sub-skills do not manage tasks.
 Execute each step in order. Wait for an explicit human response at every HUMAN GATE. If a phase
 errors, report it and ask whether to retry, skip, or abort.
 
-1. `/craft:explore $ARGUMENTS`
+1. `/craft:explore $ARGUMENTS`, then update Phase Log: explore → done. No human gate.
 
-   Writes the Exploration Report (key facts, code snippets, key files) to the workpad. Update Phase
-   Log: explore → done. No human gate.
+2. `/craft:clarify workpad.md` includes a HUMAN GATE. After response, record answers and
+   requirements in the workpad. Update Phase Log: clarify → done.
 
-2. `/craft:clarify workpad.md`
+3. `/craft:architect workpad.md` includes a HUMAN GATE. After approval, record the chosen approach
+   in the workpad. Update Phase Log: architect → done.
 
-   Reads the exploration report, asks targeted questions, and produces requirements R1..Rn. HUMAN
-   GATE. After response, record answers and requirements in the workpad. Update Phase Log: clarify →
-   done.
+4. `/craft:implement workpad.md`, then update Phase Log: implement → done. No human gate.
+   - _(Optional)_ `/craft:prose workpad.md`: If the requirements or plan include prose deliverables
+     (documentation, READMEs, changelogs, migration guides, error messages, UI copy), run this
+     phase. Implement handles code; prose handles human-facing text. Skip if the task has no prose
+     deliverables. Update Phase Log: prose → done if run, prose → skipped if not.
 
-3. `/craft:architect workpad.md`
+5. `/craft:review`, then update Phase Log: review → done. No human gate.
 
-   Reads requirements and exploration report, runs parallel architecture agents, and synthesizes a
-   recommended approach. HUMAN GATE. After approval, record the chosen approach in the workpad.
-   Update Phase Log: architect → done.
-
-4. `/craft:implement workpad.md`
-
-   Creates a branch, formalizes acceptance criteria, implements the approved plan, and runs
-   linters/tests. Update Phase Log: implement → done. No human gate.
-
-4b. _(Optional)_ `/craft:prose workpad.md`
-
-If the requirements or plan include prose deliverables (documentation, READMEs, changelogs,
-migration guides, error messages, UI copy), run this phase. Implement handles code; prose handles
-human-facing text. Skip if the task has no prose deliverables. Update Phase Log: prose → done if
-run, prose → skipped if not.
-
-5. `/craft:review`
-
-   Topic-tags the diff, spawns targeted reviewers, verifies acceptance criteria, and produces a
-   scored findings report. Update Phase Log: review → done. No human gate.
-
-6. `/craft:refine`
-
-   Applies auto-fixes, batches remaining findings for human triage, and opens the PR. HUMAN GATE
-   before opening the PR.
+6. `/craft:refine` includes a HUMAN GATE before opening the PR.
