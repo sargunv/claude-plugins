@@ -1,0 +1,13 @@
+{
+  "name": "craft",
+  "version": "0.1.0",
+  "description": "Six-phase development pipeline (Explore → Clarify → Architect → Implement → Review → Refine) that turns an issue or task description into a reviewed, mergeable pull request.",
+  "author": {
+    "name": "sargunv",
+    "url": "https://github.com/sargunv"
+  },
+  "homepage": "https://github.com/sargunv/claude-plugins",
+  "repository": "https://github.com/sargunv/claude-plugins",
+  "license": "MIT",
+  "keywords": ["workflow", "development", "review", "architecture", "polyglot"]
+}

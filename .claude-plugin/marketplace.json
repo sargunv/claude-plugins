@@ -1,0 +1,16 @@
+{
+  "name": "sargunv-plugins",
+  "owner": {
+    "name": "sargunv"
+  },
+  "metadata": {
+    "description": "Claude Code plugins by sargunv"
+  },
+  "plugins": [
+    {
+      "name": "craft",
+      "source": "./plugins/craft",
+      "description": "Six-phase development pipeline (Explore → Clarify → Architect → Implement → Review → Refine) that turns an issue or task description into a reviewed, mergeable pull request."
+    }
+  ]
+}

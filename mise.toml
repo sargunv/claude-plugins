@@ -1,0 +1,24 @@
+[settings]
+experimental = true
+pin = true
+
+[hooks]
+postinstall = ["hk install --mise"]
+
+[tools]
+dprint = "0.53.2"
+hk = "1.41.0"
+pkl = "0.31.0"
+uv = "0.10.7"
+
+[tasks.check]
+description = "Run all checks"
+run = "hk check --all"
+
+[tasks.fix]
+description = "Fix all auto-fixable issues"
+run = "hk fix --all"
+
+[tasks.claude]
+description = "Run Claude Code with this plugin loaded"
+run = "claude --plugin-dir plugins/craft"

@@ -1,0 +1,32 @@
+amends "package://github.com/jdx/hk/releases/download/v1.41.0/hk@1.41.0#/Config.pkl"
+
+import "package://github.com/jdx/hk/releases/download/v1.41.0/hk@1.41.0#/Builtins.pkl"
+
+local allSteps = new Mapping<String, Step> {
+  ["dprint"] = Builtins.dprint
+  ["claudelint"] = new Step {
+    check = "uvx claudelint --strict"
+    glob = "plugins/*/**"
+  }
+}
+
+hooks {
+  ["pre-commit"] {
+    fix = true
+    stash = "git"
+    steps {
+      ...allSteps
+    }
+  }
+  ["check"] {
+    steps {
+      ...allSteps
+    }
+  }
+  ["fix"] {
+    fix = true
+    steps {
+      ...allSteps
+    }
+  }
+}
