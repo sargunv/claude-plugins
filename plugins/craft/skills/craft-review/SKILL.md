@@ -64,7 +64,8 @@ Each reviewer returns structured findings using the finding format defined in th
 Spawn the following **in parallel**, in a single message:
 
 - All reviewers marked `✓` in the Always? column of the map (`reviewer-correctness`,
-  `reviewer-simplification`, `reviewer-requirements`)
+  `reviewer-simplification`, `reviewer-requirements`) — **skip `reviewer-requirements` if no workpad
+  was found**
 - The **topic-tagger** sub-agent (`subagent_type: "craft:topic-tagger"`), passing it:
   - The full diff
   - The list of changed file paths
