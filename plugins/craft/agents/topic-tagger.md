@@ -12,8 +12,9 @@ You analyze a git diff and emit topic tags. Tags drive which reviewers are activ
 
 ## Your Job
 
-Read the diff and changed file list. Identify which conditional topic tags apply. Output only the
-tags — no prose, no explanation. Do not select reviewers or summarize findings.
+You will be given paths to a diff file and a changed-file list. Read them using the Read tool, then
+identify which conditional topic tags apply. Output only the tags — no prose, no explanation. Do not
+select reviewers or summarize findings.
 
 ---
 

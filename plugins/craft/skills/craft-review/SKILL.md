@@ -35,9 +35,14 @@ completion bar check skipped.")
 
 ## Step 1 — Gather Diff and Context
 
+Save the diff and changed-file list to temporary files so that sub-agents can read them directly
+(avoids copying the full diff into every agent prompt). Use `mktemp -d` to create a unique directory
+so concurrent reviews across projects or worktrees don't collide:
+
 ```bash
-git diff ${ARGUMENTS:-main}...HEAD 2>/dev/null || git diff HEAD~1
-git diff ${ARGUMENTS:-main}...HEAD --name-only 2>/dev/null || git diff HEAD~1 --name-only
+REVIEW_TMPDIR=$(mktemp -d)
+(git diff ${ARGUMENTS:-main}...HEAD 2>/dev/null || git diff HEAD~1) > "$REVIEW_TMPDIR/diff.patch"
+(git diff ${ARGUMENTS:-main}...HEAD --name-only 2>/dev/null || git diff HEAD~1 --name-only) > "$REVIEW_TMPDIR/files.txt"
 ```
 
 Read the workpad (`workpad.md`) for: requirements R1..Rn, acceptance criteria, implementation
@@ -49,13 +54,15 @@ Report: "No workpad found — requirements traceability and AC verification skip
 Read the topic-reviewer map. Each reviewer agent has a matching `subagent_type` (e.g.,
 `"craft:reviewer-correctness"`, `"craft:reviewer-simplification"`, etc.).
 
-Pass every reviewer:
+Tell every reviewer to collect context themselves. Pass every reviewer:
 
-- The diff (full)
-- Full content of the changed files (read them, do not summarize)
-- Their agent definition (focus + domain exclusions)
+- The path to the diff file: `$REVIEW_TMPDIR/diff.patch` (agent reads it via the Read tool)
+- The path to the changed-file list: `$REVIEW_TMPDIR/files.txt` (agent reads it, then reads each
+  listed file to get the full content)
 - Requirements R1..Rn from workpad (≤300 words), if available
 - Implementation summary from workpad (≤200 words), if available
+
+Do NOT paste the diff or file contents into the agent prompt — the agents will read them directly.
 
 Each reviewer returns structured findings using the finding format defined in their agent file.
 
@@ -66,8 +73,8 @@ Spawn the following **in parallel**, in a single message:
 - All reviewers marked `✓` in the Always? column of the map (`reviewer-correctness`,
   `reviewer-simplification`, `reviewer-requirements`)
 - The **topic-tagger** sub-agent (`subagent_type: "craft:topic-tagger"`), passing it:
-  - The full diff
-  - The list of changed file paths
+  - The path to the diff file: `$REVIEW_TMPDIR/diff.patch`
+  - The path to the changed-file list: `$REVIEW_TMPDIR/files.txt`
   - The tag vocabulary from the topic-reviewer map
 
 The tagger emits conditional topic tags only (not the always-on ones). Reviewer selection happens in
@@ -110,7 +117,7 @@ Spawn the **review-verifier** sub-agent using the Agent tool with
 Pass to it:
 
 - The acceptance criteria from workpad
-- All changed files (read them)
+- The path to the changed-file list: `$REVIEW_TMPDIR/files.txt` (agent reads each listed file)
 
 The verifier checks each AC against the implementation:
 
