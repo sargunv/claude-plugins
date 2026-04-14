@@ -10,18 +10,12 @@ Arguments: $ARGUMENTS
 
 ---
 
-## Supporting files
-
-- [reviewer-contract.md](reviewer-contract.md) — every reviewer sub-agent must read this before
-  reviewing and must follow its finding format exactly
-- [ac-verification-contract.md](ac-verification-contract.md) — format and verification rules for
-  acceptance-criteria verification passes
-- [finding-verification-contract.md](finding-verification-contract.md) — format and verification
-  rules for independent finding verification
-
 ## Role
 
 Orchestrate a multi-angle review that proves the implementation satisfies its requirements.
+
+Do not read reviewer or verifier contract files in the orchestrator. Pass their paths to the
+relevant sub-agents and have those sub-agents read them directly.
 
 ## Resuming
 
@@ -30,7 +24,7 @@ requirements traceability and AC verification. If not, proceed without it and no
 
 ## Interpreting Arguments
 
-Interpret review targets conservatively:
+Interpret review targets as follows:
 
 - branch name, commit ref, or explicit diff target: review that target against the current branch
   when possible; otherwise review the current branch against that target
