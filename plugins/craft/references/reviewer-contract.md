@@ -82,7 +82,7 @@ the security reviewer. The review orchestrator automatically spawns independent 
 and P1 findings with POSSIBLE confidence; a steady stream of unverified POSSIBLE findings slows the
 pipeline.
 
-Exception: `reviewer-security` may publish POSSIBLE findings at P0 and P1 severity. Security
+Exception: the `security` review may publish POSSIBLE findings at P0 and P1 severity. Security
 findings have asymmetric cost — missing a real vulnerability is worse than a false positive. When
 publishing a POSSIBLE security finding, explain clearly why the concern might not materialize.
 

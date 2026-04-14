@@ -1,8 +1,7 @@
 ---
 name: craft-architect
-description: Designs an implementation plan by running parallel architecture agents (debate + single-approach), then stress-tests the synthesis adversarially. Requires requirements (R1..Rn) from a workpad or inline context. HUMAN GATE. Typically invoked by the /craft pipeline after clarification.
+description: Designs an implementation plan by running parallel architecture passes across distinct approach lenses, then stress-tests the recommendation adversarially. Requires requirements (R1..Rn) from a workpad or inline context. HUMAN GATE. Typically invoked by the /craft pipeline after clarification.
 argument-hint: "[workpad path or inline context]"
-allowed-tools: Agent Read Glob Grep WebFetch WebSearch
 ---
 
 # /craft-architect — Architecture
@@ -31,62 +30,93 @@ Read the workpad (`workpad.md` or `$ARGUMENTS`) to retrieve:
 If the workpad is missing or does not contain requirements R1..Rn, stop and ask for it. Do not
 proceed without requirements — architecture without requirements produces plans that fail review.
 
-Read the key files surfaced during exploration before spawning agents.
+Read the key files surfaced during exploration before spawning planning passes.
 
-## Track 1 — Party Mode Debate
+## Approach Passes
 
-Spawn **one** Party Mode agent using the Agent tool with `subagent_type: "craft:architect-party"`.
-
-Pass to the agent:
-
-- Task description
-- Exploration key facts and relevant code snippets
-- Requirements R1..Rn
-
-The agent runs three sequential personas (PM → Architect → Developer) in one session and produces a
-**Tradeoff Map**:
-
-- Convergences (all personas agreed)
-- Divergences (unresolved tensions between personas)
-- Deferred to Implementation (unknowns the developer persona flagged)
-
-## Track 2 — Classical Single-Approach Agents
-
-Spawn based on task scope:
+Spawn planning passes based on task scope:
 
 **Small tasks** (≤3 requirements, single-file or tightly scoped changes): spawn **Minimal only**.
 **Medium tasks** (cross-file, new component/function, 4–6 requirements): spawn **Minimal +
 Clean/Robust**. **Large tasks** (new subsystem, API surface change, data model change, ≥7
 requirements): spawn **Minimal + Clean/Robust + Pragmatic**.
 
-All agents use `subagent_type: "craft:architect"`. Pass each a distinct approach directive in the
-prompt:
+Give each pass a distinct approach directive:
 
-**Agent: Minimal** — fewest moving parts, smallest diff, maximum reuse of existing code. **Agent:
-Clean/Robust** — correct abstractions, full error handling, future-proof design. **Agent:
-Pragmatic** — best fit for this codebase's actual patterns, fastest to implement correctly.
+**Approach: Minimal** — fewest moving parts, smallest diff, maximum reuse of existing code.
+**Approach: Clean/Robust** — correct abstractions, full error handling, future-proof design.
+**Approach: Pragmatic** — best fit for this codebase's actual patterns, fastest to implement
+correctly.
 
-**Optional (any task size, spawn when warranted):** **Agent: Performance** — optimize for
-throughput/latency; spawn when performance is a stated requirement. **Agent: Incremental** — staged
-rollout with feature flags; spawn when change is high-risk or zero-downtime deployment is required.
+**Optional (any task size, spawn when warranted):** **Approach: Performance** — optimize for
+throughput/latency; spawn when performance is a stated requirement. **Approach: Incremental** —
+staged rollout with feature flags; spawn when change is high-risk or zero-downtime deployment is
+required.
 
-Each agent receives the same context as Track 1 (task + key facts + code snippets + R1..Rn). Each
-commits to exactly ONE approach. No hedging. No "it depends."
+Each pass receives the same context: task + key facts + code snippets + R1..Rn. Each pass must
+commit to exactly ONE approach. No hedging. No "it depends."
+
+For each pass, require this output:
+
+```markdown
+## Approach: [name]
+
+**Core idea:** [one sentence]
+
+**Why this approach for THIS codebase:** [2-3 sentences connecting the approach to the specific
+codebase patterns found in exploration]
+
+### Files to create/modify
+
+- `path/to/file.ts` — [what changes and why, with brief code sketch if helpful]
+- [every file touched]
+
+### Key design decisions
+
+-
+
+### Requirement coverage
+
+| Req | Covered by  | Verification approach |
+| --- | ----------- | --------------------- |
+| R1  | [component] | [how it's verifiable] |
+| R2  | ...         | ...                   |
+
+### Test strategy
+
+[What to test, how, what test files to create/modify]
+
+### Risks and mitigations
+
+-
+
+### What this approach trades away
+
+[Honest about the costs. Every approach has them.]
+```
+
+Rules for each pass:
+
+- Commit fully. Do not enumerate alternatives.
+- Reference actual file paths from exploration. Do not invent paths.
+- Every requirement must appear in the coverage table.
+- If an approach cannot satisfy a requirement, say so explicitly.
+- Identify the biggest risk in the approach.
+- Name any new dependency the approach requires.
 
 ## Synthesis
 
-After all Track 1 and Track 2 agents return:
+After all approach passes return:
 
-1. **Per-agent summaries** — distill each classical agent's proposal into a 2-3 sentence summary
-   capturing what it does and how. Incorporate insights from the Party Mode tradeoff map (use
-   convergences to strengthen shared elements, use divergences to surface genuine choices).
+1. **Per-pass summaries** — distill each approach into a 2-3 sentence summary capturing what it does
+   and how.
 
 2. **Tradeoffs comparison** — build a comparison table across approaches. Include dimensions where
    approaches meaningfully differ: scope of change, complexity, risk, and any requirements where
    coverage diverges. Omit dimensions where all approaches agree.
 
-3. **Deferred to Implementation** — from the Party Mode developer persona plus any unknowns
-   classical agents could not resolve. List explicitly. These go in the workpad.
+3. **Deferred to Implementation** — list the unknowns the approach passes could not resolve. These
+   go in the workpad.
 
 4. **Recommendation** — pick the single best approach. Combining elements from multiple approaches
    is allowed when it produces a stronger plan, but never as a compromise to avoid deciding.
@@ -95,13 +125,41 @@ After all Track 1 and Track 2 agents return:
 
 ## Adversarial Stress Test
 
-After synthesis, spawn the adversarial agent using the Agent tool with
-`subagent_type: "craft:architect-adversarial"`.
+After synthesis, run one adversarial stress-test pass against the recommendation.
 
 Pass it: the synthesized recommendation + R1..Rn + key facts.
 
-The adversarial agent finds the single biggest structural flaw — the one assumption that, if wrong,
-causes the plan to fail. It returns a finding with severity P0/P1/P2/none.
+Its job is to find the single biggest structural flaw — the one assumption that, if wrong, causes
+the plan to fail.
+
+Use this process:
+
+1. Identify the top 3 structural assumptions the plan makes.
+2. Ask of each: if this is wrong, how badly does the plan fail?
+3. Select the single most dangerous assumption.
+4. Describe the failure mode concretely.
+
+Use this output format:
+
+```markdown
+## Adversarial Finding
+
+**Severity:** P0-BLOCKER | P1-HIGH | P2-MEDIUM | none
+
+**Assumption under attack:** [State the specific assumption the plan makes, as concretely as
+possible]
+
+**Failure mode:** [What happens if this assumption is wrong. Name the exact point in implementation
+where things would break.]
+
+**Evidence of risk:** [What in the exploration output or requirements suggests this assumption might
+not hold? If the assumption is verified, say so.]
+
+**Mitigation (if any):** [Low-cost way to verify or de-risk the assumption before implementation
+starts]
+```
+
+If the plan is genuinely sound, return severity `none` rather than manufacturing a finding.
 
 Include the adversarial finding in the output. If P0: add `[ADVERSARIAL-P0]` marker. The human
 should address a P0 finding before approving. P1/P2 findings are informational.

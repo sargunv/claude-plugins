@@ -34,7 +34,8 @@ phase can also be invoked individually:
 2. [`/craft-clarify <task>`](skills/craft-clarify/SKILL.md): Turns a vague task into numbered
    requirements (R1..Rn) by asking targeted questions with concrete recommendations.
 3. [`/craft-architect <workpad>`](skills/craft-architect/SKILL.md): Designs an implementation plan
-   by running parallel architecture agents, then stress-tests the synthesis adversarially.
+   by running parallel architecture passes across distinct approach lenses, then stress-tests the
+   recommendation adversarially.
 4. [`/craft-implement <workpad>`](skills/craft-implement/SKILL.md): Executes an approved
    architecture plan, creates a branch, formalizes acceptance criteria, implements changes, and runs
    linters/tests.
@@ -59,10 +60,9 @@ that point:
 
 ### Review
 
-A broad set of focused reviewers: covering correctness, security, performance, concurrency,
-accessibility, and more: are activated by topic tags on each diff. See the
-[topic → reviewer map](skills/craft-review/topic-reviewer-map.md) for the full list, their domains,
-and activation rules. To add a reviewer, see [Adding a Reviewer](docs/adding-a-reviewer.md).
+A broad set of focused reviews, covering correctness, security, performance, concurrency,
+accessibility, and more, are selected directly from the diff. Required and conditional review types
+are defined in [`/craft-review`](skills/craft-review/SKILL.md).
 
 ### Rework
 

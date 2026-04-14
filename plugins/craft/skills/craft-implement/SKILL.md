@@ -2,7 +2,6 @@
 name: craft-implement
 description: Executes an approved architecture plan — creates a branch, formalizes acceptance criteria, implements changes, and runs linters/tests. Requires requirements (R1..Rn) and an approved architectural approach from a workpad or inline context. Defers out-of-scope discoveries. Typically invoked by the /craft pipeline after architecture approval.
 argument-hint: "[workpad path or inline approved approach]"
-allowed-tools: Agent Bash Read Write Edit Glob Grep WebFetch WebSearch
 ---
 
 # /craft-implement — Implementation

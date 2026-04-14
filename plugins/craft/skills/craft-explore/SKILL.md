@@ -2,14 +2,11 @@
 name: craft-explore
 description: This skill should be used when the user asks to "explore the codebase", "how does this work", "what would this change touch", "map out the code", or wants to understand a codebase area before making decisions. Deep codebase exploration that spawns parallel sub-agents across architecture, change surface, data, and dependencies.
 argument-hint: "[issue URL, ID, or task description]"
-allowed-tools: Agent Read Glob Grep WebFetch WebSearch
 ---
 
 # /craft-explore — Codebase Exploration
 
 Arguments: $ARGUMENTS
-
-Git context: !`git log --oneline -5 2>/dev/null || echo "(not a git repo)"`
 
 ---
 
@@ -19,10 +16,10 @@ Orchestrate exploration to build a dense, accurate picture of the codebase from 
 angles simultaneously. Dense signal here prevents wasted cycles in downstream work (clarification,
 architecture, or direct implementation).
 
-## Explorer Agents
+## Explorer Passes
 
-Spawn the following sub-agents **in parallel** using the Agent tool. Each has a distinct,
-non-overlapping focus. Tell each agent what the others are NOT covering.
+Spawn the following exploration sub-agents **in parallel**. Each has a distinct, non-overlapping
+focus. Tell each sub-agent what the others are NOT covering.
 
 **Always spawn (required):**
 
@@ -47,17 +44,29 @@ Spawn when the task involves new dependencies or external service changes.
 
 ## Instructions
 
-1. Determine which agents to spawn (always A+B, add C/D when warranted by the task).
-2. Launch all selected agents **in parallel** using the Agent tool with
-   `subagent_type: "craft:explorer"`. Pass to each agent's prompt:
+1. Determine which sub-agents to spawn (always A+B, add C/D when warranted by the task).
+2. Launch all selected sub-agents **in parallel**. For each one, pass:
    - The task description ($ARGUMENTS)
    - Their specific focus area
-   - Explicit statement of what the OTHER agents are covering (to prevent overlap)
-3. Wait for all agents to return. Each agent produces Key Facts, Code Snippets, Key Files, and
-   Appendix.
-4. Read the key files each agent surfaced **before synthesizing** — do not summarize agent
+   - Explicit statement of what the OTHER sub-agents are covering (to prevent overlap)
+   - Required output format:
+     - `Key Facts` (<=20 bullets, dense and specific, with exact file paths and line numbers when
+       relevant)
+     - `Code Snippets` (exact snippets only, never pseudocode, labeled with why they matter)
+     - `Key Files` (5-10 most important files with one-sentence explanation)
+     - `Appendix` (lower-priority observations)
+   - Required rules:
+     - Read actual files before making claims
+     - Note important absences
+     - Say when something is ambiguous
+     - Do not make implementation recommendations
+     - Stay within the assigned focus area
+     - Fetch external docs only when local files are insufficient and the dependency or API is
+       relevant
+3. Wait for all sub-agents to return.
+4. Read the key files each sub-agent surfaced **before synthesizing** — do not summarize agent
    summaries; read the actual files.
-5. Produce the **Exploration Report** below. This is YOUR synthesis across all agents' outputs —
+5. Produce the **Exploration Report** below. This is YOUR synthesis across all sub-agents' outputs —
    distill the most signal-dense facts, cross-referencing where agents surfaced the same files.
    - The `Appendix: Full Agent Outputs` section contains each agent's raw output for traceability.
 

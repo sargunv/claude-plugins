@@ -2,7 +2,6 @@
 name: craft-clarify
 description: This skill should be used when the user asks to "clarify requirements", "scope a task", "define requirements", "what should we build", or has a vague task idea that needs scoping before implementation. Turns a vague task into numbered requirements (R1..Rn) by asking targeted questions with concrete recommendations. HUMAN GATE.
 argument-hint: "[task description, issue URL, or workpad path]"
-allowed-tools: Agent Read Glob Grep
 ---
 
 # /craft-clarify — Clarification
@@ -65,8 +64,8 @@ one sentence what it would do.
 Produce the **Requirements List**:
 
 Note: Before writing R1..Rn to `workpad.md`, check if it exists. If not, create it from
-`${CLAUDE_PLUGIN_ROOT}/references/workpad-template.md` and tell the user: "Created workpad.md from
-template."
+`../../references/workpad-template.md` relative to this skill file and tell the user: "Created
+workpad.md from template."
 
 ```text
 ## Requirements

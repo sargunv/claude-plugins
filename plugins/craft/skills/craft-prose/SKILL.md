@@ -2,7 +2,6 @@
 name: craft-prose
 description: This skill should be used when the user asks to "write documentation", "edit the README", "polish this text", "write a migration guide", "improve error messages", or needs to write, rewrite, or polish any prose meant for human readers (docs, changelogs, UI copy, commit messages). Also activates as an optional pipeline step when a task involves prose alongside code. Uses Strunk's Elements of Style.
 argument-hint: "[file path, glob pattern, or writing task description]"
-allowed-tools: Agent Bash Read Write Edit Glob Grep
 ---
 
 # /craft-prose — Write and Edit Prose
@@ -13,9 +12,9 @@ Arguments: $ARGUMENTS
 
 ## Style Reference
 
-`${CLAUDE_PLUGIN_ROOT}/references/elements-of-style.md` contains Strunk's _The Elements of Style_
-(1918): 18 rules of usage and composition, plus a reference of commonly misused words. Read it
-before writing or editing prose.
+`../../references/elements-of-style.md` relative to this skill file contains Strunk's _The Elements
+of Style_ (1918): 18 rules of usage and composition, plus a reference of commonly misused words.
+Read it before writing or editing prose.
 
 ## Determining the Task
 
@@ -45,6 +44,5 @@ changelogs, migration guides, error messages, and any other prose deliverable.
 ## Sub-agents
 
 Always dispatch sub-agents for prose work, even for a single file. The style guide is ~12,000 tokens
-— keeping that out of the orchestrator's context matters. Dispatch one sub-agent per file using the
-Agent tool. Each sub-agent reads the style guide and one file, writes or edits the prose, and
-returns.
+— keeping that out of the orchestrator's context matters. Dispatch one sub-agent per file. Each
+sub-agent reads the style guide and one file, writes or edits the prose, and returns.

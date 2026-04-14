@@ -2,7 +2,6 @@
 name: craft
 description: This skill should be used when the user asks to "build a feature", "fix a bug", "implement an issue", "work on a task", or provides an issue URL/ID with intent to plan, code, and review. End-to-end development pipeline (explore → clarify → architect → implement → review → refine) that takes a task from idea to PR.
 argument-hint: "[issue URL, issue ID, or task description]"
-allowed-tools: Agent Bash Read Write Edit Glob Grep
 ---
 
 # /craft — Full Development Pipeline
@@ -13,9 +12,9 @@ Arguments: $ARGUMENTS
 
 ## Setup
 
-Create `workpad.md` in the project root from the template at
-`${CLAUDE_PLUGIN_ROOT}/references/workpad-template.md`. If a workpad already exists, read it and
-resume from the current phase in the Phase Log.
+Create `workpad.md` in the project root from the template at `../../references/workpad-template.md`
+relative to this skill file. If a workpad already exists, read it and resume from the current phase
+in the Phase Log.
 
 If `$ARGUMENTS` is an issue URL or ID, fetch the full issue using the appropriate tool (e.g.,
 `gh issue view`, Linear MCP, Jira MCP, or whatever the project uses) and write it as the task
@@ -23,7 +22,7 @@ description in the workpad header.
 
 ## Progress Tracking
 
-Before starting the pipeline, create a task for each phase with TaskCreate:
+Before starting the pipeline, create a todo item for each phase:
 
 - "Explore codebase" (activeForm: "Exploring codebase")
 - "Clarify requirements" (activeForm: "Clarifying requirements")

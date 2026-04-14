@@ -1,8 +1,7 @@
 ---
 name: craft-review
-description: This skill should be used when the user asks to "review my code", "check this branch", "what's wrong with my changes", "review the PR", or wants a code review on any branch, PR, or diff. Multi-reviewer code review that topic-tags the diff, spawns targeted reviewers in parallel, verifies acceptance criteria, and scores findings.
+description: This skill should be used when the user asks to "review my code", "check this branch", "what's wrong with my changes", "review the PR", or wants a code review on any branch, PR, or diff. Multi-reviewer code review that runs required reviews, selects conditional reviews from the diff, verifies acceptance criteria, and scores findings.
 argument-hint: "[branch, diff target, or workpad path]"
-allowed-tools: Agent Bash Read Glob Grep WebFetch WebSearch
 ---
 
 # /craft-review — Review
@@ -13,8 +12,8 @@ Arguments: $ARGUMENTS
 
 ## Supporting files
 
-- [topic-reviewer-map.md](topic-reviewer-map.md) — maps topic tags to reviewer agents; read during
-  reviewer selection
+- [reviewer-contract.md](../../references/reviewer-contract.md) — every reviewer sub-agent must read
+  this before reviewing and must follow its finding format exactly
 
 ## Role
 
@@ -51,48 +50,70 @@ Report: "No workpad found — requirements traceability and AC verification skip
 
 ## Step 2 — Review
 
-Read the topic-reviewer map. Each reviewer agent has a matching `subagent_type` (e.g.,
-`"craft:reviewer-correctness"`, `"craft:reviewer-simplification"`, etc.).
-
 Tell every reviewer to collect context themselves. Pass every reviewer:
 
 - The path to the diff file: `$REVIEW_TMPDIR/diff.patch` (agent reads it via the Read tool)
 - The path to the changed-file list: `$REVIEW_TMPDIR/files.txt` (agent reads it, then reads each
   listed file to get the full content)
+- The path to the shared reviewer contract: `../../references/reviewer-contract.md` relative to this
+  skill file (agent reads it before reviewing)
 - Requirements R1..Rn from workpad (≤300 words), if available
 - Implementation summary from workpad (≤200 words), if available
 
 Do NOT paste the diff or file contents into the agent prompt — the agents will read them directly.
 
-Each reviewer returns structured findings using the finding format defined in their agent file.
+Each reviewer returns structured findings using the format from `reviewer-contract.md`.
 
-### Wave 1 — always-on reviewers + topic tagger
+### Required reviews
 
-Spawn the following **in parallel**, in a single message:
+Spawn these reviewers **in parallel** for every review:
 
-- All reviewers marked `✓` in the Always? column of the map (`reviewer-correctness`,
-  `reviewer-simplification`, `reviewer-requirements`) — **skip `reviewer-requirements` if no workpad
-  was found**
-- The **topic-tagger** sub-agent (`subagent_type: "craft:topic-tagger"`), passing it:
-  - The path to the diff file: `$REVIEW_TMPDIR/diff.patch`
-  - The path to the changed-file list: `$REVIEW_TMPDIR/files.txt`
-  - The tag vocabulary from the topic-reviewer map
+- `correctness` — always run; focus on broken behavior, wrong outputs, violated contracts, and
+  invariant failures.
+- `simplification` — always run; focus on unnecessary complexity, over-engineering, dead code, and
+  opportunities to achieve the same outcome with a smaller or clearer change.
+- `requirements` — run when a workpad with R1..Rn exists; focus on whether the implementation
+  actually satisfies the stated requirements and acceptance criteria.
 
-The tagger emits conditional topic tags only (not the always-on ones). Reviewer selection happens in
-wave 2.
+### Conditional reviews
 
-### Wave 2 — conditional reviewers
+Select conditional reviewers by inspecting the diff and changed-file list directly. Spawn all that
+apply, in parallel:
 
-After the topic tagger returns, select and spawn conditional reviewers:
+- `idioms` — run once per distinct language or framework in the changed files; focus on stack-
+  specific conventions and misuse of common patterns. If multiple stacks appear in the diff, spawn
+  one idioms reviewer per stack and tell each one which stack it owns.
+- `security` — run when the diff touches auth, authorization, input validation, secrets handling,
+  cryptography, permissions, or other security-sensitive boundaries; focus on vulnerabilities and
+  exposure risks.
+- `performance` — run when the diff touches hot paths, large loops, database/query paths, caching,
+  allocation-heavy code, or blocking operations; focus on throughput, latency, and avoidable work.
+- `tests` — run when test files changed, significant logic changed, or new logic was added without
+  corresponding tests; focus on missing coverage, weak assertions, and misleading tests.
+- `error-handling` — run when the diff introduces new failure paths, retries, timeouts, external
+  calls, parsing, I/O, or partial state changes; focus on missing handlers, swallowed errors, and
+  cleanup gaps.
+- `api-surface` — run when exported types, public functions, handlers, schemas, or wire contracts
+  changed; focus on breaking changes, naming, versioning, and external compatibility.
+- `documentation` — run when public interfaces changed, comments changed, or user-facing docs may
+  now be stale; focus on missing or misleading documentation.
+- `logging` — run when operational code paths, especially error paths or integrations, changed;
+  focus on missing logs, wrong log levels, and broken structured logging.
+- `concurrency` — run when shared state, async coordination, locks, queues, workers, or thread-like
+  behavior changed; focus on races, ordering bugs, and unsafe cross-task interactions.
+- `accessibility` — run when UI code changes touch interactive elements, forms, focus management,
+  keyboard handling, ARIA, or color-dependent information; focus on user accessibility regressions.
+- `memory-safety` — run when the diff touches manual memory management, unsafe blocks, FFI, native
+  interop, pointers, or buffer manipulation; focus on lifetime, aliasing, bounds, and ownership
+  errors.
+- `prose` — run when markdown, README sections, doc comments, error messages, UI copy, changelogs,
+  or other human-facing text changed; focus on clarity, correctness, and contradictions with the
+  code.
+- `architecture` — run when new modules, new files, new cross-module imports, dependency wiring, or
+  layer boundaries changed; focus on layering, coupling, and fit with the existing structure.
 
-- For each tag emitted by the tagger, spawn the reviewer(s) listed in the topic-reviewer map's
-  Reviewer(s) column.
-- For `reviewer-idioms`: spawn one instance per `idioms-*` tag. Pass the stack name as a parameter.
-  Example: tag `idioms-go` → spawn reviewer-idioms with "Review Go idioms. The stack is: Go."
-- **Coverage floor:** If the tagger's tags select zero conditional reviewers and the diff exceeds 50
-  lines, add `reviewer-tests` and `reviewer-error-handling` as defaults. Log: "Topic tagger emitted
-  no conditional tags for >50 line diff. Adding tests + error-handling as coverage floor."
-- Deduplicate against wave 1 reviewers before spawning.
+Coverage floor: if no conditional review applies and the diff exceeds 50 lines, add `tests` and
+`error-handling` anyway.
 
 ## Step 3 — Cross-Review Corroboration
 
@@ -112,8 +133,7 @@ After all reviewers return, scan for the same finding across multiple outputs:
 Skip this step if no workpad or acceptance criteria exist. Note in the Review Report: "No acceptance
 criteria — AC verification skipped."
 
-Spawn the **review-verifier** sub-agent using the Agent tool with
-`subagent_type: "craft:review-verifier"`.
+Spawn one verification pass for acceptance criteria.
 
 Pass to it:
 
@@ -122,16 +142,48 @@ Pass to it:
 
 The verifier checks each AC against the implementation:
 
-- Runs auto-verify methods where possible
-- Returns PASS / FAIL / MANUAL-VERIFY for each AC
+- Reads the criterion statement and auto-verify method
+- Runs auto-verify methods where possible:
+  - `Auto-verify: test <name>` -> look for a test with that name or description in the changed files
+    or test directories and check whether it appears to cover the criterion
+  - `Auto-verify: grep <pattern> in <file>` -> search for the pattern in the specified file
+  - `Auto-verify: lint rule <rule>` -> check linter config files for the rule
+  - `[MANUAL-VERIFY]` -> mark as requires human verification, not a failure
+- Returns PASS / FAIL / MANUAL-VERIFY for each AC using this format:
+
+```markdown
+## AC Verification Results
+
+| AC  | Req | Criterion   | Auto-verify     | Result | Notes                           |
+| --- | --- | ----------- | --------------- | ------ | ------------------------------- |
+| AC1 | R1  | [criterion] | test auth_test  | PASS   | Found at tests/auth_test.go:55  |
+| AC2 | R2  | [criterion] | grep pattern    | FAIL   | Pattern not found in src/api.ts |
+| AC3 | R3  | [criterion] | [MANUAL-VERIFY] | MANUAL | Requires browser test           |
+```
+
 - FAIL becomes a P1 finding in the review report
 
 ## Step 5 — Independent Verification
 
 Collect all findings with confidence **POSSIBLE or LIKELY**. Batch them into a reasonable number of
-**review-verifier** instances (using `subagent_type: "craft:review-verifier"`), grouping findings
-that share context (e.g., same file, same library, same external API docs). For each finding, the
-verifier returns a binary verdict: CONFIRMED / NOT CONFIRMED.
+verification passes, grouping findings that share context (e.g., same file, same library, same
+external API docs). For each finding, the verifier returns a binary verdict: CONFIRMED / NOT
+CONFIRMED.
+
+For each finding, the verification pass should:
+
+- Read the finding description and evidence
+- Read the specified file at the specified line
+- Trace the code path if needed
+- Return one of two verdicts only, using this format:
+
+```markdown
+## Verdict: [CONFIRMED | NOT CONFIRMED] — [finding title]
+
+**File:** `path/to/file:line`
+
+**Reasoning:** [one paragraph — what you found when you examined the code]
+```
 
 - If CONFIRMED: finding stands at its stated severity.
 - If NOT CONFIRMED: drop the finding.
@@ -147,8 +199,8 @@ Compute review score (informational — not a hard gate):
 - P1 finding: −8
 - P2 finding: −3
 - P3 finding: −1
-- Unaddressed requirement: −15 each Note: failed ACs are scored as P1 findings (−8 each) via
-  review-verifier output. Do not apply a separate Failed AC penalty — it would double-count.
+- Unaddressed requirement: −15 each Note: failed ACs are scored as P1 findings (−8 each) via the AC
+  verification output. Do not apply a separate Failed AC penalty — it would double-count.
 
 Produce the **Review Report**:
 

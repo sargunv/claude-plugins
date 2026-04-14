@@ -2,7 +2,6 @@
 name: craft-refine
 description: Applies auto-fixes from review findings, batches remaining findings for human triage, then opens the PR. Requires review findings from a workpad or prior /craft-review run. HUMAN GATE before PR. Typically invoked by the /craft pipeline after review.
 argument-hint: "[branch or workpad path]"
-allowed-tools: Agent Bash Read Write Edit Glob Grep
 ---
 
 # /craft-refine — Refine
@@ -103,9 +102,9 @@ Trigger a second review round only if:
 - A fix added a new file, OR
 - A fix touched a different module from the finding itself
 
-If triggered: run `reviewer-correctness` and `reviewer-simplification` only, on the fix delta only
-(not the full diff). Apply any new P0/P1 findings immediately — no second triage, as these are
-regressions from the fixes themselves.
+If triggered: run `correctness` and `simplification` reviews only, on the fix delta only (not the
+full diff). Apply any new P0/P1 findings immediately — no second triage, as these are regressions
+from the fixes themselves.
 
 ## Step 5 — PR Feedback Sweep
 
@@ -179,7 +178,7 @@ If the human requests significant rework (structural change or new requirement):
 3. Read the old `workpad.md` and copy out the Requirements section (R1..Rn plus any new requirements
    from the rework instruction)
 4. Rename old workpad: `mv workpad.md workpad-v1.md`
-5. Create fresh `workpad.md` from `${CLAUDE_PLUGIN_ROOT}/references/workpad-template.md`
+5. Create fresh `workpad.md` from `../../references/workpad-template.md` relative to this skill file
 6. Write the copied requirements into `## Requirements` in the new workpad
 7. Write the rework instruction into `## Task` as an amendment
 8. Return to `/craft-architect`, not `/craft-implement`
