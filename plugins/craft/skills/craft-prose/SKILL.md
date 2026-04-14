@@ -12,9 +12,9 @@ Arguments: $ARGUMENTS
 
 ## Style Reference
 
-`../../references/elements-of-style.md` relative to this skill file contains Strunk's _The Elements
-of Style_ (1918): 18 rules of usage and composition, plus a reference of commonly misused words.
-Read it before writing or editing prose.
+`elements-of-style.md` next to this skill file contains Strunk's _The Elements of Style_ (1918): 18
+rules of usage and composition, plus a reference of commonly misused words. Read it before writing
+or editing prose.
 
 ## Determining the Task
 

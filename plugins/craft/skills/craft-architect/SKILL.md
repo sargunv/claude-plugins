@@ -21,10 +21,10 @@ requirements R1..Rn). The human gate fires again — that is expected.
 
 ## Setup
 
-- [architecture-approach-contract.md](../../references/architecture-approach-contract.md) — shared
-  contract for per-approach planning passes
-- [architecture-adversarial-contract.md](../../references/architecture-adversarial-contract.md) —
-  shared contract for the adversarial stress-test pass
+- [architecture-approach-contract.md](architecture-approach-contract.md) — shared contract for
+  per-approach planning passes
+- [architecture-adversarial-contract.md](architecture-adversarial-contract.md) — shared contract for
+  the adversarial stress-test pass
 
 Read the workpad (`workpad.md` or `$ARGUMENTS`) to retrieve:
 
@@ -61,8 +61,7 @@ required.
 Each pass receives the same context: task + key facts + code snippets + R1..Rn. Each pass must
 commit to exactly ONE approach. No hedging. No "it depends."
 
-Require each pass to read and follow `../../references/architecture-approach-contract.md` relative
-to this skill file.
+Require each pass to read and follow `architecture-approach-contract.md` next to this skill file.
 
 ## Synthesis
 
@@ -89,7 +88,7 @@ After synthesis, run one adversarial stress-test pass against the recommendation
 
 Pass it: the synthesized recommendation + R1..Rn + key facts.
 
-Read and follow `../../references/architecture-adversarial-contract.md` relative to this skill file.
+Read and follow `architecture-adversarial-contract.md` next to this skill file.
 
 Include the adversarial finding in the output. If P0: add `[ADVERSARIAL-P0]` marker. The human
 should address a P0 finding before approving. P1/P2 findings are informational.

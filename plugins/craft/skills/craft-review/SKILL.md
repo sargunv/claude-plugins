@@ -12,12 +12,12 @@ Arguments: $ARGUMENTS
 
 ## Supporting files
 
-- [reviewer-contract.md](../../references/reviewer-contract.md) — every reviewer sub-agent must read
-  this before reviewing and must follow its finding format exactly
-- [ac-verification-contract.md](../../references/ac-verification-contract.md) — format and
-  verification rules for acceptance-criteria verification passes
-- [finding-verification-contract.md](../../references/finding-verification-contract.md) — format and
-  verification rules for independent finding verification
+- [reviewer-contract.md](reviewer-contract.md) — every reviewer sub-agent must read this before
+  reviewing and must follow its finding format exactly
+- [ac-verification-contract.md](ac-verification-contract.md) — format and verification rules for
+  acceptance-criteria verification passes
+- [finding-verification-contract.md](finding-verification-contract.md) — format and verification
+  rules for independent finding verification
 
 ## Role
 
@@ -75,8 +75,8 @@ Tell every reviewer to collect context themselves. Pass every reviewer:
 - The path to the diff file: `$REVIEW_TMPDIR/diff.patch` (agent reads it via the Read tool)
 - The path to the changed-file list: `$REVIEW_TMPDIR/files.txt` (agent reads it, then reads each
   listed file to get the full content)
-- The path to the shared reviewer contract: `../../references/reviewer-contract.md` relative to this
-  skill file (agent reads it before reviewing)
+- The path to the shared reviewer contract: `reviewer-contract.md` next to this skill file (agent
+  reads it before reviewing)
 - Requirements R1..Rn from workpad (≤300 words), if available
 - Implementation summary from workpad (≤200 words), if available
 
@@ -154,7 +154,7 @@ Pass to it:
 
 The verifier checks each AC against the implementation:
 
-- Read and follow `../../references/ac-verification-contract.md` relative to this skill file
+- Read and follow `ac-verification-contract.md` next to this skill file
 
 - FAIL becomes a P1 finding in the review report
 
@@ -167,7 +167,7 @@ CONFIRMED.
 
 For each finding, the verification pass should:
 
-- Read and follow `../../references/finding-verification-contract.md` relative to this skill file
+- Read and follow `finding-verification-contract.md` next to this skill file
 
 - If CONFIRMED: finding stands at its stated severity.
 - If NOT CONFIRMED: drop the finding.

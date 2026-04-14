@@ -18,8 +18,8 @@ architecture, or direct implementation).
 
 ## Supporting files
 
-- [exploration-pass-contract.md](../../references/exploration-pass-contract.md) — shared output and
-  behavior contract for exploration sub-agents
+- [exploration-pass-contract.md](exploration-pass-contract.md) — shared output and behavior contract
+  for exploration sub-agents
 
 ## Explorer Passes
 
@@ -54,7 +54,7 @@ Spawn when the task involves new dependencies or external service changes.
    - The task description ($ARGUMENTS)
    - Their specific focus area
    - Explicit statement of what the OTHER sub-agents are covering (to prevent overlap)
-   - Read and follow `../../references/exploration-pass-contract.md` relative to this skill file
+   - Read and follow `exploration-pass-contract.md` next to this skill file
 3. Wait for all sub-agents to return.
 4. Read the key files each sub-agent surfaced **before synthesizing** — do not summarize agent
    summaries; read the actual files.
