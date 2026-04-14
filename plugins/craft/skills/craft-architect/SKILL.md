@@ -14,17 +14,15 @@ Arguments: $ARGUMENTS
 
 Run thorough architectural analysis before a single line of code is written.
 
+Do not read planning-pass or adversarial contract files in the orchestrator. Pass their paths to the
+relevant sub-agents and have those sub-agents read them directly.
+
 ## Resuming
 
 If `$ARGUMENTS` is a workpad path, read it to restore context (task description, exploration report,
 requirements R1..Rn). The human gate fires again — that is expected.
 
 ## Setup
-
-- [architecture-approach-contract.md](architecture-approach-contract.md) — shared contract for
-  per-approach planning passes
-- [architecture-adversarial-contract.md](architecture-adversarial-contract.md) — shared contract for
-  the adversarial stress-test pass
 
 Read the workpad (`workpad.md` or `$ARGUMENTS`) to retrieve:
 

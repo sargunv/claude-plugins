@@ -16,10 +16,8 @@ Orchestrate exploration to build a dense, accurate picture of the codebase from 
 angles simultaneously. Dense signal here prevents wasted cycles in downstream work (clarification,
 architecture, or direct implementation).
 
-## Supporting files
-
-- [exploration-pass-contract.md](exploration-pass-contract.md) — shared output and behavior contract
-  for exploration sub-agents
+Do not read sub-agent contract files in the orchestrator. Pass their paths to the relevant
+sub-agents and have those sub-agents read them directly.
 
 ## Explorer Passes
 
