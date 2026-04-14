@@ -16,6 +16,11 @@ Orchestrate exploration to build a dense, accurate picture of the codebase from 
 angles simultaneously. Dense signal here prevents wasted cycles in downstream work (clarification,
 architecture, or direct implementation).
 
+## Supporting files
+
+- [exploration-pass-contract.md](../../references/exploration-pass-contract.md) — shared output and
+  behavior contract for exploration sub-agents
+
 ## Explorer Passes
 
 Spawn the following exploration sub-agents **in parallel**. Each has a distinct, non-overlapping
@@ -49,20 +54,7 @@ Spawn when the task involves new dependencies or external service changes.
    - The task description ($ARGUMENTS)
    - Their specific focus area
    - Explicit statement of what the OTHER sub-agents are covering (to prevent overlap)
-   - Required output format:
-     - `Key Facts` (<=20 bullets, dense and specific, with exact file paths and line numbers when
-       relevant)
-     - `Code Snippets` (exact snippets only, never pseudocode, labeled with why they matter)
-     - `Key Files` (5-10 most important files with one-sentence explanation)
-     - `Appendix` (lower-priority observations)
-   - Required rules:
-     - Read actual files before making claims
-     - Note important absences
-     - Say when something is ambiguous
-     - Do not make implementation recommendations
-     - Stay within the assigned focus area
-     - Fetch external docs only when local files are insufficient and the dependency or API is
-       relevant
+   - Read and follow `../../references/exploration-pass-contract.md` relative to this skill file
 3. Wait for all sub-agents to return.
 4. Read the key files each sub-agent surfaced **before synthesizing** — do not summarize agent
    summaries; read the actual files.

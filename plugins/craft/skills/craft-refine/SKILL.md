@@ -168,19 +168,3 @@ If no deferred findings exist, skip the deferred section and only ask about the 
 
 Act on the human's response: file issues using the appropriate CLI tool (e.g., `gh issue create`),
 clean up or preserve the workpad as requested.
-
-## Rework Protocol
-
-If the human requests significant rework (structural change or new requirement):
-
-1. If a PR/MR is open: close it
-2. Create new branch: `<branch-name>-v2` (increment version suffix each time)
-3. Read the old `workpad.md` and copy out the Requirements section (R1..Rn plus any new requirements
-   from the rework instruction)
-4. Rename old workpad: `mv workpad.md workpad-v1.md`
-5. Create fresh `workpad.md` from `../../references/workpad-template.md` relative to this skill file
-6. Write the copied requirements into `## Requirements` in the new workpad
-7. Write the rework instruction into `## Task` as an amendment
-8. Return to `/craft-architect`, not `/craft-implement`
-
-Rework is a reset, not a patch. The old workpad is preserved as `workpad-v1.md` for reference.

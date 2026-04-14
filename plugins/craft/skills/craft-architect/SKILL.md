@@ -21,6 +21,11 @@ requirements R1..Rn). The human gate fires again — that is expected.
 
 ## Setup
 
+- [architecture-approach-contract.md](../../references/architecture-approach-contract.md) — shared
+  contract for per-approach planning passes
+- [architecture-adversarial-contract.md](../../references/architecture-adversarial-contract.md) —
+  shared contract for the adversarial stress-test pass
+
 Read the workpad (`workpad.md` or `$ARGUMENTS`) to retrieve:
 
 - Task description
@@ -56,53 +61,8 @@ required.
 Each pass receives the same context: task + key facts + code snippets + R1..Rn. Each pass must
 commit to exactly ONE approach. No hedging. No "it depends."
 
-For each pass, require this output:
-
-```markdown
-## Approach: [name]
-
-**Core idea:** [one sentence]
-
-**Why this approach for THIS codebase:** [2-3 sentences connecting the approach to the specific
-codebase patterns found in exploration]
-
-### Files to create/modify
-
-- `path/to/file.ts` — [what changes and why, with brief code sketch if helpful]
-- [every file touched]
-
-### Key design decisions
-
--
-
-### Requirement coverage
-
-| Req | Covered by  | Verification approach |
-| --- | ----------- | --------------------- |
-| R1  | [component] | [how it's verifiable] |
-| R2  | ...         | ...                   |
-
-### Test strategy
-
-[What to test, how, what test files to create/modify]
-
-### Risks and mitigations
-
--
-
-### What this approach trades away
-
-[Honest about the costs. Every approach has them.]
-```
-
-Rules for each pass:
-
-- Commit fully. Do not enumerate alternatives.
-- Reference actual file paths from exploration. Do not invent paths.
-- Every requirement must appear in the coverage table.
-- If an approach cannot satisfy a requirement, say so explicitly.
-- Identify the biggest risk in the approach.
-- Name any new dependency the approach requires.
+Require each pass to read and follow `../../references/architecture-approach-contract.md` relative
+to this skill file.
 
 ## Synthesis
 
@@ -129,37 +89,7 @@ After synthesis, run one adversarial stress-test pass against the recommendation
 
 Pass it: the synthesized recommendation + R1..Rn + key facts.
 
-Its job is to find the single biggest structural flaw — the one assumption that, if wrong, causes
-the plan to fail.
-
-Use this process:
-
-1. Identify the top 3 structural assumptions the plan makes.
-2. Ask of each: if this is wrong, how badly does the plan fail?
-3. Select the single most dangerous assumption.
-4. Describe the failure mode concretely.
-
-Use this output format:
-
-```markdown
-## Adversarial Finding
-
-**Severity:** P0-BLOCKER | P1-HIGH | P2-MEDIUM | none
-
-**Assumption under attack:** [State the specific assumption the plan makes, as concretely as
-possible]
-
-**Failure mode:** [What happens if this assumption is wrong. Name the exact point in implementation
-where things would break.]
-
-**Evidence of risk:** [What in the exploration output or requirements suggests this assumption might
-not hold? If the assumption is verified, say so.]
-
-**Mitigation (if any):** [Low-cost way to verify or de-risk the assumption before implementation
-starts]
-```
-
-If the plan is genuinely sound, return severity `none` rather than manufacturing a finding.
+Read and follow `../../references/architecture-adversarial-contract.md` relative to this skill file.
 
 Include the adversarial finding in the output. If P0: add `[ADVERSARIAL-P0]` marker. The human
 should address a P0 finding before approving. P1/P2 findings are informational.
