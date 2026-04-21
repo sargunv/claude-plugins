@@ -1,7 +1,7 @@
 {
   "name": "craft",
   "version": "0.1.0",
-  "description": "Six-phase development pipeline (Explore → Clarify → Architect → Implement → Review → Refine) that turns an issue or task description into a reviewed, mergeable pull request.",
+  "description": "Seven-phase development pipeline (Explore → Clarify → Architect → Implement → Review → Refine → Push) that turns an issue or task description into a draft pull request.",
   "author": {
     "name": "sargunv",
     "url": "https://github.com/sargunv"

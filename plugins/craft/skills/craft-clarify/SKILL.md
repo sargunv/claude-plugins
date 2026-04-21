@@ -1,6 +1,6 @@
 ---
 name: craft-clarify
-description: This skill should be used when the user asks to "clarify requirements", "scope a task", "define requirements", "what should we build", or has a vague task idea that needs scoping before implementation. Turns a vague task into numbered requirements (R1..Rn) by asking targeted questions with concrete recommendations. HUMAN GATE.
+description: Use after craft-explore in the craft pipeline, or standalone when a task description is vague and needs scoping before implementation. Turns the task into numbered requirements (R1..Rn) by asking targeted questions with concrete recommendations. HUMAN GATE.
 argument-hint: "[task description, issue URL, or workpad path]"
 allowed-tools: Agent Read Glob Grep
 ---
@@ -21,7 +21,7 @@ If `$ARGUMENTS` is a workpad path, read it to restore context (task description,
 before writing questions. The human gate fires again — that is expected.
 
 **Commitment principle:** Never present "Option A or Option B" without a recommendation. Say "I
-recommend A because X — approve?" The human's job is to approve or adjust, not to decide from
+recommend A because X — confirm?" The human's job is to say yes or adjust, not to decide from
 scratch. Open-ended questions without recommendations force the human to do the architect's job.
 
 ## Before Writing Questions
@@ -64,10 +64,6 @@ one sentence what it would do.
 
 Produce the **Requirements List**:
 
-Note: Before writing R1..Rn to `workpad.md`, check if it exists. If not, create it from
-`${CLAUDE_PLUGIN_ROOT}/references/workpad-template.md` and tell the user: "Created workpad.md from
-template."
-
 ```text
 ## Requirements
 
@@ -78,7 +74,9 @@ R1: [statement — one sentence, specific and testable]
 R2: ...
 ```
 
-Write R1..Rn to `workpad.md` under `## Requirements`.
+If a `workpad.md` already exists (pipeline invocation — `/craft` creates it), write R1..Rn under its
+`## Requirements` section. If no workpad exists (standalone invocation), output the Requirements
+List in the conversation as the deliverable.
 
 Every question answered becomes at least one requirement. Every `[NEEDS CLARIFICATION]` item the
 human resolved becomes a requirement. If the human says "whatever you think is best" for a
@@ -92,7 +90,7 @@ Present the questions, then output the following verbatim:
 ```markdown
 ## ⏸ HUMAN GATE — Clarification
 
-Answer each question above. For questions with a recommendation, **approve** accepts it. For
+Answer each question above. For questions with a recommendation, **yes** accepts it. For
 `[NEEDS CLARIFICATION]` questions, provide an answer directly.
 ```
 

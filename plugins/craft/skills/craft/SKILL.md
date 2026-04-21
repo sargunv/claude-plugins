@@ -1,6 +1,6 @@
 ---
 name: craft
-description: This skill should be used when the user asks to "build a feature", "fix a bug", "implement an issue", "work on a task", or provides an issue URL/ID with intent to plan, code, and review. End-to-end development pipeline (explore → clarify → architect → implement → review → refine) that takes a task from idea to PR.
+description: This skill should be used when the user asks to "build a feature", "fix a bug", "implement an issue", "work on a task", or provides an issue URL/ID with intent to plan, code, and review. End-to-end development pipeline (explore → clarify → architect → implement → review → refine → push) that takes a task from idea to draft PR.
 argument-hint: "[issue URL, issue ID, or task description]"
 allowed-tools: Agent Bash Read Write Edit Glob Grep
 ---
@@ -14,7 +14,7 @@ Arguments: $ARGUMENTS
 ## Setup
 
 Create `workpad.md` in the project root from the template at
-`${CLAUDE_PLUGIN_ROOT}/references/workpad-template.md`. If a workpad already exists, read it and
+`${CLAUDE_PLUGIN_ROOT}/skills/craft/workpad-template.md`. If a workpad already exists, read it and
 resume from the current phase in the Phase Log.
 
 If `$ARGUMENTS` is an issue URL or ID, fetch the full issue using the appropriate tool (e.g.,
@@ -23,18 +23,19 @@ description in the workpad header.
 
 ## Progress Tracking
 
-Before starting the pipeline, create a task for each phase with TaskCreate:
+Before starting the pipeline, create a todo item for each phase. Use the literal skill names
+verbatim, to remind you to use the proper skill for each step:
 
-- "Explore codebase" (activeForm: "Exploring codebase")
-- "Clarify requirements" (activeForm: "Clarifying requirements")
-- "Design architecture" (activeForm: "Designing architecture")
-- "Implement changes" (activeForm: "Implementing changes")
-- "Polish prose" (activeForm: "Polishing prose") — only if prose step runs
-- "Review implementation" (activeForm: "Reviewing implementation")
-- "Refine and open PR" (activeForm: "Refining and opening PR")
+- "/craft-explore"
+- "/craft-clarify"
+- "/craft-architect"
+- "/craft-implement"
+- "/craft-review"
+- "/craft-refine"
+- "/craft-push"
 
-Mark each task `in_progress` when a phase starts and `completed` when it finishes. The top-level
-orchestrator owns task state; sub-skills do not manage tasks.
+Mark each task `in_progress` when a phase starts and `completed` when it finishes. You own task
+state; sub-skills do not manage tasks.
 
 ## Pipeline
 
@@ -50,11 +51,12 @@ errors, report it and ask whether to retry, skip, or abort.
    in the workpad. Update Phase Log: architect → done.
 
 4. `/craft-implement workpad.md`, then update Phase Log: implement → done. No human gate.
-   - _(Optional)_ `/craft-prose workpad.md`: If the requirements or plan include prose deliverables
-     (documentation, READMEs, changelogs, migration guides, error messages, UI copy), run this
-     phase. Implement handles code; prose handles human-facing text. Skip if the task has no prose
-     deliverables. Update Phase Log: prose → done if run, prose → skipped if not.
 
-5. `/craft-review`, then update Phase Log: review → done. No human gate.
+5. `/craft-review workpad.md`, then update Phase Log: review → done. No human gate.
 
-6. `/craft-refine` includes a HUMAN GATE before opening the PR.
+6. `/craft-refine workpad.md` includes a HUMAN GATE for triage. After it returns, the branch has
+   auto-fixes and triaged fixes applied, and deferred items are recorded in the workpad. Update
+   Phase Log: refine → done.
+
+7. `/craft-push workpad.md` includes a HUMAN GATE for the PR body. Opens the draft PR and handles
+   wrap-up (deferred findings, workpad cleanup). Update Phase Log: pr → done.

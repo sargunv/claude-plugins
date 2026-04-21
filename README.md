@@ -10,5 +10,6 @@ Claude Code plugins for software development.
 
 ## Plugins
 
-- [`/craft`](plugins/craft) — A structured six-phase development pipeline that takes an issue or
-  task description and produces a reviewed, mergeable pull request.
+- [`/craft`](plugins/craft) — A structured seven-phase development pipeline (Explore → Clarify →
+  Architect → Implement → Review → Refine → Push) that takes an issue or task description and
+  produces a draft pull request.

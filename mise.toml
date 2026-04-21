@@ -9,7 +9,8 @@ postinstall = ["hk install --mise"]
 dprint = "0.53.2"
 hk = "1.41.0"
 pkl = "0.31.0"
-uv = "0.10.7"
+uv = "0.11.2"
+"pipx:claudelint" = "0.3.6"
 
 [tasks.check]
 description = "Run all checks"

@@ -24,8 +24,8 @@ not fix it.
 
 ## Resuming
 
-If `$ARGUMENTS` is a workpad path, read it to restore context. If the branch already exists, skip
-branch creation and continue from where implementation stopped.
+If `$ARGUMENTS` is a workpad path, read it to restore context. If the branch already exists and is
+checked out, skip branch creation and continue from where implementation stopped.
 
 ## Setup
 
@@ -67,13 +67,21 @@ items: note them as `✓ DONE — [MANUAL-VERIFY] — human to check in review`.
 
 ## Branch
 
-If already on a non-main branch, use it as-is — do not create a new one.
+Determine the branch in this order:
 
-Otherwise, derive `<slug>` from the task title: lowercase, hyphens, ≤6 words.
+1. **Already on a non-main branch (anywhere in a stack):** use it as-is. This handles resumes and
+   stacked PR workflows where the parent PR's branch already exists. Do not create a new branch.
+2. **On main (or main equivalent) with a detectable in-progress branch for this task:** check it out
+   and continue.
+3. **On main with no matching branch:** derive `<slug>` from the task title (lowercase, hyphens, ≤6
+   words) and create a new branch:
 
 ```bash
 git checkout -b <branch-name>
 ```
+
+Follow any repo-specific branch-naming convention you can infer from recent branches
+(`git for-each-ref --sort=-committerdate refs/heads/ --format='%(refname:short)' | head -20`).
 
 ## Implementation Loop
 
@@ -84,9 +92,8 @@ For each file in the implementation plan:
 3. Mark the workpad task list checkbox `[x]` when done
 4. Commit logical units with descriptive messages
 
-After each significant change, run the project's linter and tests. Use the commands from CLAUDE.md
-if specified. Otherwise, determine the appropriate commands from the project's build files and
-toolchain.
+After each significant change, run the project's linter and tests — either the commands the project
+documents or, if none are documented, the ones you can determine from its build files and toolchain.
 
 If a test fails that was not touched: log it in the workpad under `### Pre-existing failures` as
 `[PRE-EXISTING-FAILURE] file:line — description`. Do not fix it. Pre-existing failures do not block

@@ -1,6 +1,6 @@
 ---
 name: craft-review
-description: This skill should be used when the user asks to "review my code", "check this branch", "what's wrong with my changes", "review the PR", or wants a code review on any branch, PR, or diff. Multi-reviewer code review that topic-tags the diff, spawns targeted reviewers in parallel, verifies acceptance criteria, and scores findings.
+description: Use after craft-implement in the craft pipeline, or standalone to review any branch, PR, or diff. Selects reviewers from an inline topic map, spawns them in parallel, corroborates findings, and verifies acceptance criteria against the workpad when present.
 argument-hint: "[branch, diff target, or workpad path]"
 allowed-tools: Agent Bash Read Glob Grep WebFetch WebSearch
 ---
@@ -11,186 +11,176 @@ Arguments: $ARGUMENTS
 
 ---
 
-## Supporting files
-
-- [topic-reviewer-map.md](topic-reviewer-map.md) — maps topic tags to reviewer agents; read during
-  reviewer selection
-
 ## Role
 
 Orchestrate a multi-angle review that proves the implementation satisfies its requirements.
 
-## Resuming
+Reviewer sub-agents are narrow by design. They are only useful when spawned together in this
+orchestrated flow — invoking any individual reviewer directly produces a weak review.
 
-If `$ARGUMENTS` is a branch name or diff target, review that branch. If a workpad exists, use it for
-requirements traceability and AC verification. If not, proceed without it and note the gap.
+## Interpreting Arguments
 
-## Step 0 — Preflight Check
+`$ARGUMENTS` can be any of the below. Resolve to a concrete `<base>` and `<head>` (or a set of paths
+to restrict to), then **state your interpretation to the human in one line** before gathering the
+diff.
 
-Before starting: read the workpad and check the Completion Bar section. If any of the 6 items are
-unchecked, stop and report: "Implementation completion bar is incomplete — items [N, N] not checked.
-Review cannot proceed until implementation is verified complete." (Exception: if `/craft-review` is
-called directly on an ad-hoc branch without a workpad, skip this check and note "No workpad —
-completion bar check skipped.")
+- **Empty** → the current branch against its base.
+- **Branch name** (e.g., `feature-x`) → that branch against its base. The base could be `main`, or
+  it could be another feature branch in a stack.
+- **Commit SHA or range** (`abc123`, `main..HEAD`, `abc123...def456`) → exactly that range.
+- **PR reference** (`#42`, a PR URL) → `gh pr diff` + `gh pr view` for diff and metadata.
+- **Workpad path** (e.g., `workpad.md`) → read the workpad for context; infer branch and base from
+  it or the current checkout.
+- **File or directory path** (`src/foo.ts`, `src/auth/`) → restrict the diff to that path, using the
+  current branch's base as the diff base.
+- **Natural-language description** → resolve to the most likely branch, PR, or diff target. Ask the
+  human if ambiguous.
+
+**Base detection** when reviewing a branch without an explicit base, review the current checkout vs
+the current branch's base, including any dirty working changes.
+
+**Interpretation line** (example): `Reviewing branch feature-x against base origin/main.`
 
 ## Step 1 — Gather Diff and Context
 
-Save the diff and changed-file list to temporary files so that sub-agents can read them directly
-(avoids copying the full diff into every agent prompt). Use `mktemp -d` to create a unique directory
-so concurrent reviews across projects or worktrees don't collide:
+Write the resolved diff and changed-file list to temp files. Each sub-agent reads them from disk —
+pasting the full diff into every reviewer's prompt would bloat context:
 
 ```bash
-REVIEW_TMPDIR=$(mktemp -d)
-(git diff ${ARGUMENTS:-main}...HEAD 2>/dev/null || git diff HEAD~1) > "$REVIEW_TMPDIR/diff.patch"
-(git diff ${ARGUMENTS:-main}...HEAD --name-only 2>/dev/null || git diff HEAD~1 --name-only) > "$REVIEW_TMPDIR/files.txt"
+DIFF_FILE=$(mktemp /tmp/craft-review-diff.XXXXXX.patch)
+FILES_FILE=$(mktemp /tmp/craft-review-files.XXXXXX.txt)
+git diff <base>...<head> > "$DIFF_FILE"
+git diff <base>...<head> --name-only > "$FILES_FILE"
 ```
 
-Read the workpad (`workpad.md`) for: requirements R1..Rn, acceptance criteria, implementation
-summary. If workpad is absent or has no requirements, proceed without them but note in the Review
-Report: "No workpad found — requirements traceability and AC verification skipped."
+Remember `$DIFF_FILE` and `$FILES_FILE` — you will pass their paths to every reviewer spawned in
+Step 3.
 
-## Step 2 — Review
+Read the workpad (`workpad.md` or the path from the interpretation step, if any) for: requirements
+R1..Rn, acceptance criteria, implementation summary. If the workpad is absent or has no
+requirements, proceed without them but note in the Review Report: "No workpad found — requirements
+traceability skipped."
 
-Read the topic-reviewer map. Each reviewer agent has a matching `subagent_type` (e.g.,
-`"craft:reviewer-correctness"`, `"craft:reviewer-simplification"`, etc.).
+## Step 2 — Reviewer Selection
 
-Tell every reviewer to collect context themselves. Pass every reviewer:
+Select reviewers by reading the diff against the map below.
 
-- The path to the diff file: `$REVIEW_TMPDIR/diff.patch` (agent reads it via the Read tool)
-- The path to the changed-file list: `$REVIEW_TMPDIR/files.txt` (agent reads it, then reads each
-  listed file to get the full content)
-- Requirements R1..Rn from workpad (≤300 words), if available
-- Implementation summary from workpad (≤200 words), if available
+**Always spawn (on every review):**
 
-Do NOT paste the diff or file contents into the agent prompt — the agents will read them directly.
+- `reviewer-correctness` — any logic change risks wrong outputs, broken contracts, invariant
+  violations.
+- `reviewer-simplification` — any code change risks over-engineering, dead code, unnecessary
+  complexity.
 
-Each reviewer returns structured findings using the finding format defined in their agent file.
+**Conditional — spawn when the trigger matches:**
 
-### Wave 1 — always-on reviewers + topic tagger
+- `reviewer-requirements` — a workpad with requirements and/or acceptance criteria exists.
+- `reviewer-idioms` — diff contains code in a detectable language or framework. Spawn one instance
+  per distinct stack present (detect from file extensions and imports; pass the stack name in the
+  prompt, e.g., "You are reviewing Go idioms.").
+- `reviewer-security` — diff touches auth, authorization, input validation, secrets, injection,
+  crypto, or permissions.
+- `reviewer-memory-safety` — diff contains manual memory management (malloc/free, new/delete, unsafe
+  blocks), pointer arithmetic, FFI/native interop, buffer operations, or code in languages with
+  manual/semi-manual memory management (C, C++, Zig, Rust unsafe, CGo, JNI).
+- `reviewer-performance` — diff touches hot paths, has O(n²) patterns, N+1 queries, allocations in
+  loops, missing caching, or blocking in async contexts.
+- `reviewer-tests` — test files added or modified, OR significant logic added without test changes.
+- `reviewer-error-handling` — missing exception handlers, swallowed errors, silent failures, partial
+  failure without cleanup, or retry/timeout gaps.
+- `reviewer-api-surface` — public interfaces changed, exported types modified, new HTTP handlers,
+  breaking API changes, or versioning.
+- `reviewer-documentation` — missing docs on new public interfaces, stale comments contradicting
+  changed code, or README sections invalidated by the diff.
+- `reviewer-logging` — error paths with no log output, wrong log levels, unstructured logging in a
+  structured-log codebase, or debug logging in prod paths.
+- `reviewer-concurrency` (and `reviewer-correctness` in parallel) — shared mutable state without
+  synchronization, lock ordering, data races, holding locks across awaits, or thread-unsafe
+  collections.
+- `reviewer-accessibility` — UI changes touching interactive elements, ARIA, form labels, keyboard
+  navigation, focus management, or color-dependent information.
+- `reviewer-prose` — markdown, README sections, doc comments, error messages, UI strings,
+  changelogs, or other human-facing prose.
+- `reviewer-architecture` — new files or modules, new cross-module imports, dependency wiring
+  changed, code moved between layers, or new interfaces or abstract types.
 
-Spawn the following **in parallel**, in a single message:
+Select **all** relevant reviewers; there is no cap. Over-select rather than under-select. A false
+positive adds one reviewer; a false negative misses a real issue.
 
-- All reviewers marked `✓` in the Always? column of the map (`reviewer-correctness`,
-  `reviewer-simplification`, `reviewer-requirements`) — **skip `reviewer-requirements` if no workpad
-  was found**
-- The **topic-tagger** sub-agent (`subagent_type: "craft:topic-tagger"`), passing it:
-  - The path to the diff file: `$REVIEW_TMPDIR/diff.patch`
-  - The path to the changed-file list: `$REVIEW_TMPDIR/files.txt`
-  - The tag vocabulary from the topic-reviewer map
+## Step 3 — Parallel Review
 
-The tagger emits conditional topic tags only (not the always-on ones). Reviewer selection happens in
-wave 2.
+Spawn all selected reviewers **in parallel** using the Agent tool with the matching `subagent_type`
+(e.g., `"craft:reviewer-correctness"`). Each reviewer's prompt receives:
 
-### Wave 2 — conditional reviewers
+- The path to the diff file from Step 1 (`$DIFF_FILE`).
+- The path to the changed-file list (`$FILES_FILE`).
+- The path to the workpad, if available.
+- For `reviewer-idioms`: the stack name (e.g., "The stack is: Go.")
 
-After the topic tagger returns, select and spawn conditional reviewers:
-
-- For each tag emitted by the tagger, spawn the reviewer(s) listed in the topic-reviewer map's
-  Reviewer(s) column.
-- For `reviewer-idioms`: spawn one instance per `idioms-*` tag. Pass the stack name as a parameter.
-  Example: tag `idioms-go` → spawn reviewer-idioms with "Review Go idioms. The stack is: Go."
-- **Coverage floor:** If the tagger's tags select zero conditional reviewers and the diff exceeds 50
-  lines, add `reviewer-tests` and `reviewer-error-handling` as defaults. Log: "Topic tagger emitted
-  no conditional tags for >50 line diff. Adding tests + error-handling as coverage floor."
-- Deduplicate against wave 1 reviewers before spawning.
-
-## Step 3 — Cross-Review Corroboration
+## Step 4 — Cross-Review Corroboration
 
 After all reviewers return, scan for the same finding across multiple outputs:
 
-- **Match criteria:** Same file:line (±3 lines) AND ≥80% text overlap, OR clearly the same root
-  cause described differently
+- **Match criteria:** same file:line (±3 lines) AND ≥80% text overlap, OR clearly the same root
+  cause described differently.
 - **Mark** corroborated findings with `[CORROBORATED-N]` where N is the number of reviewers who
-  flagged it
-- **Effect on confidence:** Corroborated POSSIBLE findings upgrade to LIKELY; LIKELY remains LIKELY
-  (no auto-severity change, but use this signal to prioritize triage)
-- **Deduplication:** Show the corroborated finding once with the best-written description; note the
-  other reviewer(s) in parentheses
+  flagged it.
+- **Effect on confidence:** corroborated LIKELY findings are treated as CERTAIN for downstream
+  prioritization; use the signal to prioritize triage.
+- **Deduplication:** show the corroborated finding once with the best-written description; note the
+  other reviewer(s) in parentheses.
 
-## Step 4 — AC Verification
+## Step 5 — Independent Verification of LIKELY findings
 
-Skip this step if no workpad or acceptance criteria exist. Note in the Review Report: "No acceptance
-criteria — AC verification skipped."
+Collect all findings with confidence **LIKELY**. Batch them into a panel of **review-verifier**
+instances (`subagent_type: "craft:review-verifier"`), grouping findings that share context (same
+file, same library, same external API docs). For each finding, the verifier returns CONFIRMED, NOT
+CONFIRMED, or REFUTED.
 
-Spawn the **review-verifier** sub-agent using the Agent tool with
-`subagent_type: "craft:review-verifier"`.
-
-Pass to it:
-
-- The acceptance criteria from workpad
-- The path to the changed-file list: `$REVIEW_TMPDIR/files.txt` (agent reads each listed file)
-
-The verifier checks each AC against the implementation:
-
-- Runs auto-verify methods where possible
-- Returns PASS / FAIL / MANUAL-VERIFY for each AC
-- FAIL becomes a P1 finding in the review report
-
-## Step 5 — Independent Verification
-
-Collect all findings with confidence **POSSIBLE or LIKELY**. Batch them into a reasonable number of
-**review-verifier** instances (using `subagent_type: "craft:review-verifier"`), grouping findings
-that share context (e.g., same file, same library, same external API docs). For each finding, the
-verifier returns a binary verdict: CONFIRMED / NOT CONFIRMED.
-
-- If CONFIRMED: finding stands at its stated severity.
-- If NOT CONFIRMED: drop the finding.
+- **CONFIRMED:** finding stands at its stated severity.
+- **NOT CONFIRMED:** verifier could not tell from inspection alone. Keep the finding and tag it
+  `[UNVERIFIED]` in the review report so human triage weighs it accordingly.
+- **REFUTED:** drop the finding.
 
 Findings with confidence **CERTAIN** skip verification.
 
-## Step 6 — Scoring and Synthesis
+## Step 6 — Review Report
 
-Compute review score (informational — not a hard gate):
-
-- Start at 100
-- P0 finding: −25 (floor at 0)
-- P1 finding: −8
-- P2 finding: −3
-- P3 finding: −1
-- Unaddressed requirement: −15 each Note: failed ACs are scored as P1 findings (−8 each) via
-  review-verifier output. Do not apply a separate Failed AC penalty — it would double-count.
-
-Produce the **Review Report**:
+Produce the Review Report:
 
 ```markdown
 ## Review Report
 
-Score: [0–100] ([pass/needs-attention]) Reviewers activated: [list]
+Reviewers activated: [list]
 
 ### Findings
 
-- **F-1** [P0] `auth.ts:88` — JWT not validated on refresh (correctness, medium, human-triage)
+- **F-1** [P0] `auth.ts:88` — JWT not validated on refresh (correctness, human-triage)
   [CORROBORATED]
-- **F-2** [P1] `utils.ts:12` — Null dereference on empty list (correctness, trivial, auto-fix)
-- **F-3** [P2] `api.ts:55` — Missing return type annotation (types, trivial, auto-fix)
-
-### AC Verification
-
-- AC1 [R1]: PASS — test auth_test.ts
-- AC2 [R2]: FAIL — grep pattern not found
+- **F-2** [P1] `utils.ts:12` — Null dereference on empty list (correctness, auto-fix)
+- **F-3** [P1] `src/api.ts:—` — AC2 [R2] failed: grep for `X-Correlation-ID` not found
+  (requirements, human-triage)
+- **F-4** [P2] `api.ts:55` — Missing return type annotation (types, auto-fix)
 
 ### Reviewers with No Findings
 
-[list reviewers that found nothing above confidence threshold]
+[list reviewers that found nothing — e.g., `reviewer-requirements` listed here means every R was
+covered and every AC passed its auto-verify]
 ```
 
 **Finding Action classification** (reviewers decide this per finding):
 
-- `auto-fix` — clear, unambiguous fix; no design decision required
-- `human-triage` — requires direction, judgment, or is legitimately deferrable
+- `auto-fix` — clear, unambiguous fix; no design decision required.
+- `human-triage` — requires direction, judgment, or is legitimately deferrable.
 
 ## Workpad Update
 
 If a workpad exists, write the review summary to `workpad.md` under `## Review`:
 
-- Score
 - Reviewers activated list
 - Findings list
-- AC Verification list
 
-Then update the Phase Log: review → done, with timestamp and score.
+Update the Phase Log: review → done.
 
 If no workpad exists (standalone invocation), skip this step — the review report in the conversation
-is the deliverable. If the review produced findings, append:
-
-> Run `/craft-refine` to apply auto-fixes and triage the remaining findings.
+is the deliverable.

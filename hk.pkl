@@ -5,8 +5,8 @@ import "package://github.com/jdx/hk/releases/download/v1.41.0/hk@1.41.0#/Builtin
 local allSteps = new Mapping<String, Step> {
   ["dprint"] = Builtins.dprint
   ["claudelint"] = new Step {
-    check = "uvx claudelint --strict"
-    glob = "plugins/*/**"
+    check = "claudelint --strict"
+    glob = List("plugins/**", ".claude-plugin/**")
   }
 }
 

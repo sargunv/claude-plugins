@@ -1,16 +1,16 @@
 # `/craft`
 
-A structured six-phase development pipeline — Explore, Clarify, Architect, Implement, Review, Refine
-— that takes an issue or task description and produces a reviewed, mergeable pull request.
+A structured seven-phase development pipeline — Explore, Clarify, Architect, Implement, Review,
+Refine, Push — that takes an issue or task description and produces a draft pull request.
 
 ## Design Principles
 
 **Gates at decisions, not at checkpoints.** Human gates appear after Clarify (before any design
-work), after Architect (before any code), and in Refine (before the PR opens). These are the three
-points where human judgment changes the outcome. Phases that produce no human-visible decision —
-Explore, Implement, Review: run without a gate.
+work), after Architect (before any code), in Refine (for triage decisions), and in Push (before the
+PR opens). These are the points where human judgment changes the outcome. Phases that produce no
+human-visible decision — Explore, Implement, Review — run without a gate.
 
-**Review drives quality.** Focused reviewers work in parallel across non-overlapping domains,
+**Review drives quality.** Focused reviewers work in parallel across distinct domains,
 cross-corroborate findings, independently verify uncertain results, and feed structured refinement.
 Review drives quality; everything before it produces something worth reviewing.
 
@@ -26,25 +26,32 @@ language-specific rules or framework assumptions.
 
 ## Usage
 
-[`/craft <task>`](skills/craft/SKILL.md) runs the full pipeline from Explore through Refine. Each
+[`/craft <task>`](skills/craft/SKILL.md) runs the full pipeline from Explore through Push. Each
 phase can also be invoked individually:
 
 1. [`/craft-explore <task>`](skills/craft-explore/SKILL.md): Deep codebase exploration that spawns
-   parallel sub-agents across architecture, change surface, data, and dependencies.
+   parallel sub-agents across architecture, change surface, data, dependencies, and PR history.
 2. [`/craft-clarify <task>`](skills/craft-clarify/SKILL.md): Turns a vague task into numbered
    requirements (R1..Rn) by asking targeted questions with concrete recommendations.
-3. [`/craft-architect <workpad>`](skills/craft-architect/SKILL.md): Designs an implementation plan
-   by running parallel architecture agents, then stress-tests the synthesis adversarially.
+3. [`/craft-architect <workpad>`](skills/craft-architect/SKILL.md): Designs an implementation plan,
+   stress-tests it with an adversarial sub-agent, then presents a single recommendation.
 4. [`/craft-implement <workpad>`](skills/craft-implement/SKILL.md): Executes an approved
-   architecture plan, creates a branch, formalizes acceptance criteria, implements changes, and runs
-   linters/tests.
-   - [`/craft-prose [file|workpad]`](skills/craft-prose/SKILL.md): Writes or edits prose for
-     clarity, concision, and correctness using Strunk's _Elements of Style_.
-5. [`/craft-review [branch]`](skills/craft-review/SKILL.md): Multi-reviewer code review that
-   topic-tags the diff, spawns targeted reviewers in parallel, verifies acceptance criteria, and
-   scores findings.
-6. [`/craft-refine [branch]`](skills/craft-refine/SKILL.md): Turns review findings into a mergeable
-   PR, applies auto-fixes, batches remaining findings for human triage, then opens the PR.
+   architecture plan, formalizes acceptance criteria, implements changes, and runs linters/tests.
+5. [`/craft-review [branch]`](skills/craft-review/SKILL.md): Multi-reviewer code review that selects
+   reviewers from an inline topic map, spawns them in parallel, corroborates findings, verifies
+   acceptance criteria, and reports.
+6. [`/craft-refine [branch]`](skills/craft-refine/SKILL.md): Turns review findings into clean code —
+   applies auto-fixes, batches remaining findings for human triage, re-runs narrow review on fix
+   deltas.
+7. [`/craft-push [workpad]`](skills/craft-push/SKILL.md): Pushes the branch and opens a draft PR/MR
+   using whatever forge tooling is available (CLI or MCP), then handles wrap-up (filing deferred
+   findings in your issue tracker, workpad cleanup).
+
+### Standalone skills
+
+[`/prose [file|glob|description]`](skills/prose/SKILL.md) — Write or edit prose for human readers
+(docs, READMEs, changelogs, error messages, UI copy) using Strunk's _Elements of Style_. Not part of
+the craft pipeline; invoke directly when prose work is the task.
 
 ### The workpad
 
@@ -59,10 +66,11 @@ that point:
 
 ### Review
 
-A broad set of focused reviewers: covering correctness, security, performance, concurrency,
-accessibility, and more: are activated by topic tags on each diff. See the
-[topic → reviewer map](skills/craft-review/topic-reviewer-map.md) for the full list, their domains,
-and activation rules. To add a reviewer, see [Adding a Reviewer](docs/adding-a-reviewer.md).
+A broad set of focused reviewers — covering correctness, security, performance, concurrency,
+accessibility, memory safety, and more — are selected by the inline topic map in
+[craft-review](skills/craft-review/SKILL.md) based on what the diff touches. That file is also the
+place to look when adding a new reviewer: register the agent in `agents/` and add a bullet to the
+topic map.
 
 ### Rework
 
