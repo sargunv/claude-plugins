@@ -99,6 +99,8 @@ Select reviewers by reading the diff against the map below.
   collections.
 - `reviewer-accessibility` — UI changes touching interactive elements, ARIA, form labels, keyboard
   navigation, focus management, or color-dependent information.
+- `reviewer-responsiveness` — any new or changed UI layout in a web or native app, unless the app is
+  clearly meant for a fixed viewport (game canvas, menu-bar app, kiosk, embedded widget).
 - `reviewer-prose` — markdown, README sections, doc comments, error messages, UI strings,
   changelogs, or other human-facing prose.
 - `reviewer-architecture` — new files or modules, new cross-module imports, dependency wiring
